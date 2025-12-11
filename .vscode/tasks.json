@@ -1,0 +1,27 @@
+// .vscode/tasks.json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Go: Run Server (with dlv)",
+      "type": "shell",
+      "command": "dlv debug ./cmd/server --headless --listen=:2345 --api-version=2 --accept-multiclient",
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Go: Build",
+      "type": "shell",
+      "command": "go build -v ./...",
+      "group": "build"
+    },
+    {
+      "label": "Go: Test",
+      "type": "shell",
+      "command": "go test ./... -v",
+      "group": "test"
+    }
+  ]
+}

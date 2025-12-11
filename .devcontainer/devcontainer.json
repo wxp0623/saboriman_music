@@ -1,0 +1,27 @@
+// .devcontainer/devcontainer.json
+{
+  "name": "Fiber Music DevContainer",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "go env -w GOPROXY=https://proxy.golang.org,direct || true && go mod download",
+  "forwardPorts": [8180, 2345, 13308, 6381],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-pull-request-github"
+      ],
+      "settings": {
+        "go.gopath": "/go",
+        "go.toolsEnvVars": {
+          "GOMODCACHE": "/go/pkg/mod"
+        },
+        "go.useLanguageServer": true
+      }
+    }
+  },
+  "remoteUser": "vscode"
+}

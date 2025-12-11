@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+      - /go/pkg/mod
+      - /vol1/1000/myfiles/music:/music
+    ports:
+      - "8180:8180"
+      - "2345:2345"
+    environment:
+      - GOPROXY=https://proxy.golang.org,direct
+    depends_on:
+      - db
+      - redis
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 765540@Wu
+      MYSQL_DATABASE: saboriman_music
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: 765540@Wu
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "13308:3306"
+  redis:
+    image: redis:7
+    ports:
+      - "6381:6379"
+
+volumes:
+  mysqldata:
