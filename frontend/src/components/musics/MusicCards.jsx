@@ -1,5 +1,6 @@
 import LiquidGlass from '../ui/LiquidGlass.jsx';
 import { usePlayer } from '../../contexts/PlayerContext.jsx';
+import { getFullUrl } from '../../services/fileUtil.js';
 
 export default ({ musics, onLike, onEdit, onDelete }) => {
     const { playMusic, playMusicList } = usePlayer();
@@ -12,74 +13,76 @@ export default ({ musics, onLike, onEdit, onDelete }) => {
         playMusicList(musics, 0);
     };
 
-    // 环境配置
-    const apiBaseUrl = 'http://localhost:8180';
-
-    // 获取完整的图片 URL
-    const getImageUrl = (path) => {
-        if (!path) return null;
-        if (path.startsWith('http://') || path.startsWith('https://')) {
-            return path;
-        }
-        return `${apiBaseUrl}${path}`;
-    };
-
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {musics.map((music) => (
                 <LiquidGlass key={music.id}>
-                    <div className="cursor-pointer rounded-lg shadow-lg music-card overflow-hidden">
-                        <div className="aspect-square from-purple-400 to-pink-400 flex items-center justify-center relative">
+                    <div className="cursor-pointer sbrm-rounded-lg sbrm-shadow-lg music-card overflow-hidden group">
+                        {/* 封面区域 */}
+                        <div className="aspect-square sbrm-bg-gradient flex items-center justify-center relative overflow-hidden">
                             {music.coverUrl ? (
                                 <img
-                                    src={getImageUrl(music.coverUrl)}
+                                    src={getFullUrl(music.coverUrl)}
                                     alt={music.title}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover group-hover:scale-110 sbrm-transition-all duration-500"
                                     onError={(e) => {
                                         e.target.style.display = 'none';
                                     }}
                                 />
                             ) : (
-                                <i className="fas fa-music text-4xl text-white"></i>
+                                <i className="fas fa-music text-4xl sbrm-text-on-accent"></i>
                             )}
-                            <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center opacity-0 hover:opacity-100">
+                            
+                            {/* 悬停播放按钮 */}
+                            <div className="absolute inset-0 sbrm-bg-overlay opacity-0 group-hover:opacity-100 sbrm-transition-all duration-300 flex items-center justify-center">
                                 <button
                                     onClick={() => handlePlay(music)}
-                                    className="bg-white text-purple-600 rounded-full p-3 hover:scale-110 transition-transform"
+                                    className="sbrm-bg-primary sbrm-text-accent-primary sbrm-rounded-full p-4 hover:scale-110 sbrm-transition-all sbrm-shadow-xl"
                                 >
-                                    <i className="fas fa-play text-xl"></i>
+                                    <i className="fas fa-play text-xl ml-0.5"></i>
                                 </button>
                             </div>
                         </div>
+
+                        {/* 信息区域 */}
                         <div className="p-4">
-                            <h3 className="font-semibold text-white truncate text-lg">
+                            {/* 标题 */}
+                            <h3 className="font-semibold sbrm-text-primary truncate text-lg mb-2">
                                 {music.title || '未知标题'}
                             </h3>
-                            <p className="text-gray-200 text-sm truncate">
-                                <i className="fas fa-user mr-1"></i>
+
+                            {/* 艺术家 */}
+                            <p className="sbrm-text-primary-1 text-sm truncate mb-1">
+                                <i className="fas fa-user mr-2 sbrm-text-tertiary"></i>
                                 {music.artist || '未知艺术家'}
                             </p>
-                            <p className="text-gray-300 text-xs truncate">
-                                <i className="fas fa-compact-disc mr-1"></i>
+
+                            {/* 专辑 */}
+                            <p className="sbrm-text-primary-2 text-xs truncate">
+                                <i className="fas fa-compact-disc mr-2 sbrm-text-tertiary"></i>
                                 {music.album || '未知专辑'}
                             </p>
 
-                            <div className="flex justify-between items-center mt-4 pt-3 border-t border-gray-600">
-                                <div className="flex space-x-3 text-sm text-gray-300">
-                                    <span title="播放次数">
-                                        <i className="fas fa-play mr-1"></i>
+                            {/* 统计和操作 */}
+                            <div className="flex justify-between items-center mt-4 pt-3 sbrm-border-t sbrm-border-divider">
+                                {/* 统计信息 */}
+                                <div className="flex space-x-3 text-sm sbrm-text-secondary">
+                                    <span title="播放次数" className="flex items-center gap-1">
+                                        <i className="fas fa-play text-xs"></i>
                                         {music.playCount || 0}
                                     </span>
-                                    <span title="点赞数">
-                                        <i className="fas fa-heart mr-1"></i>
+                                    <span title="点赞数" className="flex items-center gap-1">
+                                        <i className="fas fa-heart text-xs"></i>
                                         {music.likeCount || 0}
                                     </span>
                                 </div>
+
+                                {/* 操作按钮 */}
                                 <div className="flex space-x-2">
                                     {onLike && (
                                         <button
                                             onClick={() => onLike(music.id)}
-                                            className="text-red-400 hover:text-red-300 transition-colors"
+                                            className="sbrm-text-primary-1 hover:sbrm-text-error sbrm-transition p-1"
                                             title="点赞"
                                         >
                                             <i className="fas fa-heart"></i>
@@ -88,7 +91,7 @@ export default ({ musics, onLike, onEdit, onDelete }) => {
                                     {onEdit && (
                                         <button
                                             onClick={() => onEdit(music)}
-                                            className="text-blue-400 hover:text-blue-300 transition-colors"
+                                            className="sbrm-text-primary-1 hover:sbrm-text-accent-primary sbrm-transition p-1"
                                             title="编辑"
                                         >
                                             <i className="fas fa-edit"></i>
@@ -97,7 +100,7 @@ export default ({ musics, onLike, onEdit, onDelete }) => {
                                     {onDelete && (
                                         <button
                                             onClick={() => onDelete(music)}
-                                            className="text-red-400 hover:text-red-300 transition-colors"
+                                            className="sbrm-text-primary-1 hover:sbrm-text-error sbrm-transition p-1"
                                             title="删除"
                                         >
                                             <i className="fas fa-trash"></i>

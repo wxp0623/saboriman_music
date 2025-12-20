@@ -132,21 +132,12 @@ const Login = () => {
             }}></div>
             
             {/* 暗色遮罩层 */}
-            <div style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.39)",
-                backdropFilter: "blur(0px)",
-                zIndex: -1
-            }}></div>
+            <div className="fixed inset-0 sbrm-bg-overlay backdrop-blur-sm" style={{ zIndex: -1 }}></div>
 
-            {/* 背景装饰动画 - 可选，增加动感 */}
+            {/* 背景装饰动画 */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 sbrm-bg-accent-alpha-10 sbrm-rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 sbrm-bg-accent-alpha-10 sbrm-rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             </div>
 
             <div className="relative w-full max-w-md z-10">
@@ -154,21 +145,21 @@ const Login = () => {
                     <div className="p-8">
                         {/* Logo 和标题 */}
                         <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mb-4 shadow-2xl">
-                                <i className="fas fa-music text-white text-3xl"></i>
+                            <div className="inline-flex items-center justify-center w-20 h-20 sbrm-bg-gradient sbrm-rounded-full mb-4 sbrm-shadow-2xl">
+                                <i className="fas fa-music sbrm-text-on-accent text-3xl"></i>
                             </div>
-                            <h1 className="text-3xl font-bold text-white mb-2">
+                            <h1 className="text-3xl font-bold sbrm-text-primary mb-2">
                                 Saboriman Music
                             </h1>
-                            <p className="text-gray-300 text-sm">
+                            <p className="sbrm-text-secondary text-sm">
                                 {isLogin ? '欢迎回来，继续你的音乐之旅' : '加入我们，开启音乐之旅'}
                             </p>
                         </div>
 
                         {/* 错误提示 */}
                         {error && (
-                            <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg backdrop-blur-sm">
-                                <div className="flex items-center gap-2 text-red-300">
+                            <div className="mb-6 p-4 sbrm-bg-error sbrm-border sbrm-border-error sbrm-rounded-lg backdrop-blur-sm">
+                                <div className="flex items-center gap-2 sbrm-text-error">
                                     <i className="fas fa-exclamation-circle"></i>
                                     <span className="text-sm">{error}</span>
                                 </div>
@@ -179,8 +170,8 @@ const Login = () => {
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {/* 用户名 */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-200 mb-2">
-                                    <i className="fas fa-user mr-2 text-purple-400"></i>
+                                <label className="block text-sm font-medium sbrm-text-primary mb-2">
+                                    <i className="fas fa-user mr-2 sbrm-text-accent-primary"></i>
                                     用户名
                                 </label>
                                 <input
@@ -188,7 +179,7 @@ const Login = () => {
                                     name="username"
                                     value={formData.username}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all backdrop-blur-sm"
+                                    className="w-full px-4 py-3 sbrm-bg-secondary sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-text-primary placeholder:sbrm-text-tertiary focus:outline-none focus:ring-2 focus:sbrm-ring-accent-alpha-20 focus:sbrm-border-accent-primary sbrm-transition backdrop-blur-sm"
                                     placeholder="请输入用户名"
                                     autoComplete="username"
                                 />
@@ -197,8 +188,8 @@ const Login = () => {
                             {/* 邮箱（仅注册时显示） */}
                             {!isLogin && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-200 mb-2">
-                                        <i className="fas fa-envelope mr-2 text-purple-400"></i>
+                                    <label className="block text-sm font-medium sbrm-text-primary mb-2">
+                                        <i className="fas fa-envelope mr-2 sbrm-text-accent-primary"></i>
                                         邮箱
                                     </label>
                                     <input
@@ -206,7 +197,7 @@ const Login = () => {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all backdrop-blur-sm"
+                                        className="w-full px-4 py-3 sbrm-bg-secondary sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-text-primary placeholder:sbrm-text-tertiary focus:outline-none focus:ring-2 focus:sbrm-ring-accent-alpha-20 focus:sbrm-border-accent-primary sbrm-transition backdrop-blur-sm"
                                         placeholder="请输入邮箱地址"
                                         autoComplete="email"
                                     />
@@ -215,8 +206,8 @@ const Login = () => {
 
                             {/* 密码 */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-200 mb-2">
-                                    <i className="fas fa-lock mr-2 text-purple-400"></i>
+                                <label className="block text-sm font-medium sbrm-text-primary mb-2">
+                                    <i className="fas fa-lock mr-2 sbrm-text-accent-primary"></i>
                                     密码
                                 </label>
                                 <input
@@ -224,7 +215,7 @@ const Login = () => {
                                     name="password"
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all backdrop-blur-sm"
+                                    className="w-full px-4 py-3 sbrm-bg-secondary sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-text-primary placeholder:sbrm-text-tertiary focus:outline-none focus:ring-2 focus:sbrm-ring-accent-alpha-20 focus:sbrm-border-accent-primary sbrm-transition backdrop-blur-sm"
                                     placeholder="请输入密码"
                                     autoComplete={isLogin ? "current-password" : "new-password"}
                                 />
@@ -233,8 +224,8 @@ const Login = () => {
                             {/* 确认密码（仅注册时显示） */}
                             {!isLogin && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-200 mb-2">
-                                        <i className="fas fa-lock mr-2 text-purple-400"></i>
+                                    <label className="block text-sm font-medium sbrm-text-primary mb-2">
+                                        <i className="fas fa-lock mr-2 sbrm-text-accent-primary"></i>
                                         确认密码
                                     </label>
                                     <input
@@ -242,7 +233,7 @@ const Login = () => {
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleInputChange}
-                                        className="w-full px-4 py-3 bg-white/10 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all backdrop-blur-sm"
+                                        className="w-full px-4 py-3 sbrm-bg-secondary sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-text-primary placeholder:sbrm-text-tertiary focus:outline-none focus:ring-2 focus:sbrm-ring-accent-alpha-20 focus:sbrm-border-accent-primary sbrm-transition backdrop-blur-sm"
                                         placeholder="请再次输入密码"
                                         autoComplete="new-password"
                                     />
@@ -252,14 +243,14 @@ const Login = () => {
                             {/* 登录时的额外选项 */}
                             {isLogin && (
                                 <div className="flex items-center justify-between text-sm">
-                                    <label className="flex items-center text-gray-300 cursor-pointer">
+                                    <label className="flex items-center sbrm-text-secondary cursor-pointer">
                                         <input
                                             type="checkbox"
-                                            className="w-4 h-4 rounded border-gray-600 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 bg-white/10"
+                                            className="w-4 h-4 sbrm-rounded sbrm-border-primary sbrm-text-accent-primary focus:sbrm-ring-accent-primary focus:ring-offset-0 sbrm-bg-secondary"
                                         />
                                         <span className="ml-2">记住我</span>
                                     </label>
-                                    <a href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
+                                    <a href="#" className="sbrm-text-accent-primary hover:sbrm-text-accent-hover sbrm-transition">
                                         忘记密码？
                                     </a>
                                 </div>
@@ -269,7 +260,7 @@ const Login = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
+                                className="w-full py-3 px-4 sbrm-bg-gradient sbrm-text-on-accent font-semibold sbrm-rounded-lg hover:sbrm-opacity-90 focus:outline-none focus:ring-2 focus:sbrm-ring-accent-primary focus:ring-offset-2 focus:sbrm-ring-offset-primary sbrm-transition transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none sbrm-shadow-lg"
                             >
                                 {loading ? (
                                     <div className="flex items-center justify-center gap-2">
@@ -287,11 +278,11 @@ const Login = () => {
 
                         {/* 切换登录/注册 */}
                         <div className="mt-6 text-center">
-                            <p className="text-gray-300 text-sm">
+                            <p className="sbrm-text-secondary text-sm">
                                 {isLogin ? '还没有账号？' : '已有账号？'}
                                 <button
                                     onClick={switchMode}
-                                    className="ml-2 text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+                                    className="ml-2 sbrm-text-accent-primary hover:sbrm-text-accent-hover font-semibold sbrm-transition"
                                 >
                                     {isLogin ? '立即注册' : '立即登录'}
                                 </button>
@@ -301,10 +292,10 @@ const Login = () => {
                         {/* 分隔线 */}
                         <div className="relative my-6">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-600"></div>
+                                <div className="w-full sbrm-border-t sbrm-border-divider"></div>
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-4 bg-gray-800/50 text-gray-400 backdrop-blur-sm">
+                                <span className="px-4 sbrm-bg-secondary sbrm-text-tertiary backdrop-blur-sm">
                                     或使用第三方登录
                                 </span>
                             </div>
@@ -312,13 +303,13 @@ const Login = () => {
 
                         {/* 第三方登录 */}
                         <div className="grid grid-cols-3 gap-3">
-                            <button className="flex items-center justify-center py-3 px-4 bg-white/10 hover:bg-white/20 border border-gray-600 rounded-lg transition-all text-white">
+                            <button className="flex items-center justify-center py-3 px-4 sbrm-bg-secondary hover:sbrm-bg-hover sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-transition sbrm-text-primary">
                                 <i className="fab fa-github text-xl"></i>
                             </button>
-                            <button className="flex items-center justify-center py-3 px-4 bg-white/10 hover:bg-white/20 border border-gray-600 rounded-lg transition-all text-white">
+                            <button className="flex items-center justify-center py-3 px-4 sbrm-bg-secondary hover:sbrm-bg-hover sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-transition sbrm-text-primary">
                                 <i className="fab fa-google text-xl"></i>
                             </button>
-                            <button className="flex items-center justify-center py-3 px-4 bg-white/10 hover:bg-white/20 border border-gray-600 rounded-lg transition-all text-white">
+                            <button className="flex items-center justify-center py-3 px-4 sbrm-bg-secondary hover:sbrm-bg-hover sbrm-border sbrm-border-primary sbrm-rounded-lg sbrm-transition sbrm-text-primary">
                                 <i className="fab fa-weixin text-xl"></i>
                             </button>
                         </div>
@@ -326,7 +317,7 @@ const Login = () => {
                 </LiquidGlass>
 
                 {/* 底部版权信息 */}
-                <div className="mt-8 text-center text-gray-400 text-sm">
+                <div className="mt-8 text-center sbrm-text-tertiary text-sm">
                     <p>© 2024 Saboriman Music. All rights reserved.</p>
                 </div>
             </div>

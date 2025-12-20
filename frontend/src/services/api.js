@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8180/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 // Loading 状态管理
 let loadingCount = 0;
@@ -145,7 +145,11 @@ const api = {
         like: (id) => apiClient.post(`/musics/${id}/like`, {}, { showLoading: false }), // 点赞不显示 Loading
         scan: () => apiClient.post('/musics/scan'),
         getLyrics: (id, engine) => apiClient.get(`/musics/${id}/lyrics?engine=${engine}`, { showLoading: false }), // 获取歌词不显示 Loading
-        saveLyrics: (id, data) => apiClient.post(`/musics/${id}/lyrics`, data),
+    },
+
+    lyrics: {
+        saveLyrics: (id, data) => apiClient.post(`/lyrics/${id}/lyrics`, {lyrics: data}),
+        saveTranslationLyrics: (id, data) => apiClient.post(`/lyrics/${id}/tlyrics`, {lyrics: data}),
     },
 
     // 专辑相关

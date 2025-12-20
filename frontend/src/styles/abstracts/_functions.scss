@@ -1,0 +1,20 @@
+@use "sass:color";
+
+// 调整颜色亮度 - 使用新的 color.mix
+@function lighten-color($color, $percentage) {
+  @return color.mix(white, $color, $percentage);
+}
+
+@function darken-color($color, $percentage) {
+  @return color.mix(black, $color, $percentage);
+}
+
+// 生成颜色层次（从深到浅）
+@function generate-shades($base-color, $steps: 4) {
+  $shades: ();
+  @for $i from 0 through $steps {
+    $percentage: $i * 5%;
+    $shades: append($shades, darken-color($base-color, $percentage));
+  }
+  @return $shades;
+}

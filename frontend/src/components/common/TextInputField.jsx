@@ -11,6 +11,7 @@ import React from 'react';
  * @param {string} [props.type='text'] - 输入框的类型 (e.g., 'text', 'email', 'password')
  * @param {string} [props.error] - 如果有错误，则显示此错误信息
  * @param {boolean} [props.required=false] - 是否为必填项
+ * @param {boolean} [props.disabled=false] - 是否禁用
  */
 const TextInputField = ({
   label,
@@ -21,13 +22,20 @@ const TextInputField = ({
   type = 'text',
   error,
   required = false,
+  disabled = false,
 }) => {
   return (
     <div>
-      <label htmlFor={name} className="block text-sm mb-1 text-gray-700 dark:text-gray-300">
+      {/* 标签 */}
+      <label 
+        htmlFor={name} 
+        className="block text-sm font-medium mb-2 sbrm-text-primary"
+      >
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="sbrm-text-error ml-1">*</span>}
       </label>
+
+      {/* 输入框 */}
       <input
         id={name}
         type={type}
@@ -35,12 +43,32 @@ const TextInputField = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full text-lg text-gray-200 dark:text-gray-00 bg-white/10 px-3 py-1 rounded backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder:text-gray-300
-            ${
-          error ? 'border-red-500' : 'border-gray-300 dark:border-gray-700'
-        }`}
+        disabled={disabled}
+        className={`
+          w-full px-4 py-2.5
+          sbrm-bg-secondary 
+          sbrm-border 
+          ${error ? 'sbrm-border-error' : 'sbrm-border-primary'} 
+          sbrm-rounded-lg 
+          sbrm-text-primary 
+          placeholder:sbrm-text-tertiary
+          focus:outline-none 
+          focus:sbrm-border-accent-primary 
+          focus:ring-2 
+          focus:sbrm-ring-accent-alpha-20
+          disabled:opacity-50 
+          disabled:cursor-not-allowed
+          sbrm-transition
+        `}
       />
-      {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+
+      {/* 错误提示 */}
+      {error && (
+        <div className="mt-2 flex items-center gap-1.5">
+          <i className="fas fa-exclamation-circle text-xs sbrm-text-error"></i>
+          <p className="text-xs sbrm-text-error">{error}</p>
+        </div>
+      )}
     </div>
   );
 };

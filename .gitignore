@@ -2,3 +2,63 @@ node_modules/
 frontend/node_modules/
 frontend/dist/
 *.log
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Code coverage profiles and other test artifacts
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
+.env
+
+# Editor/IDE
+# .idea/
+# .vscode/
+
+.db
+
+# Vite / React build output
+frontend/dist/
+frontend/.vite/
+
+# Local environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Dependency directories
+frontend/node_modules/
+
+# Editor configs
+frontend/.DS_Store
+
+# Optional: lock files（如需提交锁文件可移除此行）
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml

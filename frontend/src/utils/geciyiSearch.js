@@ -1,7 +1,7 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 
-const API_BASE_URL = 'http://localhost:8180/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 // 搜索歌词
 export const searchLyrics = async (keyword) => {
@@ -19,10 +19,8 @@ export const searchLyrics = async (keyword) => {
                 }
         });
 
-        console.log("搜索歌词响应:", response);
-        
         if (response.data.msg === 'search_success') {
-            return response.data.data.data;;
+            return response.data.data.data;
         } else {
             throw new Error(response.data.message || '搜索歌词失败');
         }

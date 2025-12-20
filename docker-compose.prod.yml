@@ -1,0 +1,51 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8180:8180"
+    environment:
+      - GO_ENV=production
+      - SABORIMAN_DATABASE_HOST=192.168.1.193
+      - SABORIMAN_DATABASE_PORT=3308
+      - SABORIMAN_DATABASE_USER=saboriman
+      - SABORIMAN_DATABASE_PASSWORD=765540Wu
+      - SABORIMAN_DATABASE_NAME=saboriman_music
+    volumes:
+      - /vol1/1000/myfiles/music:/app/music:ro
+      - ./uploads:/app/uploads
+      - ./config:/app/config:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8180/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 765540@Wu
+      MYSQL_DATABASE: saboriman_music
+      MYSQL_USER: saboriman
+      MYSQL_PASSWORD: 765540@Wu
+      TZ: Asia/Tokyo
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "13308:3306"
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p765540@Wu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

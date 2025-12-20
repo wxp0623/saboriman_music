@@ -219,54 +219,6 @@ func (h *MusicHandler) LikeMusic(c *fiber.Ctx) error {
 	return utils.SendSuccess(c, "点赞成功", nil)
 }
 
-// SaveLyrics 保存歌词
-func (h *MusicHandler) SaveLyrics(c *fiber.Ctx) error {
-	id := c.Params("id")
-
-	// 解析请求体
-	var req struct {
-		Lyrics string `json:"lyrics"`
-	}
-	if err := c.BodyParser(&req); err != nil {
-		return utils.SendError(c, "请求参数解析失败")
-	}
-
-	if req.Lyrics == "" {
-		return utils.SendError(c, "歌词内容不能为空")
-	}
-
-	// 查询音乐信息
-	var music entity.Music
-	if err := h.db.First(&music, "id = ?", id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return utils.SendError(c, "音乐不存在")
-		}
-		return utils.SendError(c, "查询音乐失败")
-	}
-
-	// 构建歌词文件路径
-	musicPath := music.FileUrl
-	ext := filepath.Ext(musicPath)
-	lyricsPath := strings.TrimSuffix(musicPath, ext) + ".lrc"
-
-	// 确保目录存在
-	dir := filepath.Dir(lyricsPath)
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return utils.SendError(c, "创建歌词目录失败: "+err.Error())
-	}
-
-	// 写入歌词文件
-	if err := os.WriteFile(lyricsPath, []byte(req.Lyrics), 0644); err != nil {
-		return utils.SendError(c, "保存歌词文件失败: "+err.Error())
-	}
-
-	fmt.Printf("歌词已保存到: %s\n", lyricsPath)
-
-	return utils.SendSuccess(c, "歌词保存成功", fiber.Map{
-		"lyrics_path": lyricsPath,
-	})
-}
-
 // ScanResult 定义了扫描结果的结构
 type ScanResult struct {
 	ScannedFiles int      `json:"scanned_files"`
@@ -864,48 +816,84 @@ func (h *MusicHandler) GetLyrics(c *fiber.Ctx) error {
 			"error": "查询音乐失败",
 		})
 	}
+	// 获取音乐文件夹路径
+	appBasePath := config.AppConfig.AppBasePath
 
+	// 获取音乐文件所在目录
 	musicPath := music.FileUrl
-	ext := filepath.Ext(musicPath)
-	lyricsPath := strings.TrimSuffix(musicPath, ext) + ".lrc"
-	if (engine != "lrc.cx") && (engine != "netease") {
-		// 1. 首先尝试从本地文件读取歌词
-		lyricsContent, err := os.ReadFile(lyricsPath)
-		if err == nil {
-			// 本地歌词文件存在，直接返回
-			return c.JSON(fiber.Map{
-				"lyrics": string(lyricsContent),
-				"source": "local",
-			})
-		}
+	musicDir := filepath.Dir(musicPath)
+	musicFileName := filepath.Base(musicPath)
 
-		// 2. 本地没有歌词文件，尝试从网络获取
-		if !os.IsNotExist(err) {
-			// 如果是其他读取错误，返回错误信息
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "读取歌词文件失败",
-			})
+	// 构建歌词文件路径：音乐文件夹/lyrics/歌曲名.lrc
+	lyricsDir := filepath.Join(musicDir, "lyrics")
+	lyricsFileName := strings.TrimSuffix(musicFileName, filepath.Ext(musicFileName)) + ".lrc"
+	lyricsPath := filepath.Join(appBasePath, lyricsDir, lyricsFileName)
+
+	// 构建翻译歌词文件路径：音乐文件夹/lyrics/歌曲名.zh.lrc
+	translationFileName := strings.TrimSuffix(musicFileName, filepath.Ext(musicFileName)) + ".zh.lrc"
+	translationPath := filepath.Join(appBasePath, lyricsDir, translationFileName)
+
+	// 1. 优先尝试从本地 lyrics 文件夹读取歌词（无论 engine 是什么）
+	lyricsContent, lyricsErr := os.ReadFile(lyricsPath)
+	translationContent, transErr := os.ReadFile(translationPath)
+
+	if lyricsErr == nil {
+		// 本地歌词文件存在，直接返回
+		fmt.Printf("✓ 使用本地歌词: %s\n", lyricsPath)
+		result := fiber.Map{
+			"lyrics": string(lyricsContent),
+			"source": "local",
 		}
+		// 如果翻译文件也存在，一并返回
+		if transErr == nil && len(translationContent) > 0 {
+			result["tlyrics"] = string(translationContent)
+			fmt.Printf("✓ 使用本地翻译: %s\n", translationPath)
+		}
+		return c.JSON(result)
 	}
 
-	// 从网络获取歌词
+	// 2. 本地 lyrics 文件夹没有歌词，检查是否是文件读取错误
+	if !os.IsNotExist(lyricsErr) {
+		// 如果是其他读取错误（非文件不存在），返回错误信息
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "读取歌词文件失败: " + lyricsErr.Error(),
+		})
+	}
+
+	// 3. 本地 lyrics 文件夹没有歌词文件，尝试从网络获取
+	fmt.Printf("本地未找到歌词，尝试从 %s 获取...\n", engine)
+	fmt.Printf("请求歌词文件路径: %s\n", lyricsPath)
+	fmt.Printf("请求翻译歌词文件路径: %s\n", translationPath)
+
 	netLyrics, err := fetchLyricsFromNetwork(engine, music.Title, music.Artist, music.Album.Name)
 	if err != nil {
 		fmt.Printf("从网络获取歌词失败: %v\n", err)
 		return c.JSON(fiber.Map{
-			"lyrics": "",
-			"source": "none",
+			"lyrics":  "",
+			"tlyrics": "",
+			"source":  "none",
 		})
 	}
 
-	// 可选：将获取的歌词保存到本地
+	// 4. 将获取的歌词保存到本地 lyrics 文件夹
 	if netLyrics != "" {
-		go saveLyricsToFile(lyricsPath, netLyrics)
+		// 确保 lyrics 目录存在
+		if err := os.MkdirAll(lyricsDir, 0755); err != nil {
+			fmt.Printf("创建歌词目录失败: %v\n", err)
+		} else {
+			// 保存到 lyrics 文件夹下
+			if err := os.WriteFile(lyricsPath, []byte(netLyrics), 0644); err != nil {
+				fmt.Printf("保存歌词失败: %v\n", err)
+			} else {
+				fmt.Printf("✓ 歌词已保存到: %s\n", lyricsPath)
+			}
+		}
 	}
 
 	return c.JSON(fiber.Map{
-		"lyrics": netLyrics,
-		"source": "network",
+		"lyrics":  netLyrics,
+		"tlyrics": "", // 网络获取暂时不支持翻译
+		"source":  "network",
 	})
 }
 
@@ -1032,22 +1020,4 @@ func fetchFromLrcCx(title, artist, album string) (string, error) {
 	}
 
 	return best.Lrc, nil
-}
-
-// saveLyricsToFile 将歌词保存到文件
-func saveLyricsToFile(path, lyrics string) {
-	// 确保目录存在
-	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		fmt.Printf("创建歌词目录失败: %v\n", err)
-		return
-	}
-
-	// 写入文件
-	if err := os.WriteFile(path, []byte(lyrics), 0644); err != nil {
-		fmt.Printf("保存歌词文件失败: %v\n", err)
-		return
-	}
-
-	fmt.Printf("歌词已保存到: %s\n", path)
 }

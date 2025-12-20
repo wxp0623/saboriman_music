@@ -1,0 +1,7 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+:root,
+.light {
+  @include theme-variables($light-bg, $light-text, $light-border, $light-accent, $light-radius);
+}

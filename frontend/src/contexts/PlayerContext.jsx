@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import { getFullUrl } from '../services/fileUtil.js';
 
 const PlayerContext = createContext();
 
@@ -25,18 +26,6 @@ export const PlayerProvider = ({ children }) => {
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isMuted, setIsMuted] = useState(false);
-
-    // 环境配置
-    const apiBaseUrl = 'http://localhost:8180';
-
-    // 获取完整的 URL
-    const getFullUrl = (path) => {
-        if (!path) return null;
-        if (path.startsWith('http://') || path.startsWith('https://')) {
-            return path;
-        }
-        return `${apiBaseUrl}${path}`;
-    };
 
     // 音频 URL
     const audioUrl = currentMusic?.path ? getFullUrl(currentMusic.path) : '';
@@ -101,7 +90,6 @@ export const PlayerProvider = ({ children }) => {
     // 当音乐改变时重置状态
     useEffect(() => {
         if (audioRef.current && currentMusic) {
-            console.log('Loading new music:', audioUrl);
             audioRef.current.load();
             setCurrentTime(0);
             if (isPlaying) {
@@ -288,6 +276,30 @@ export const PlayerProvider = ({ children }) => {
         }
     }, [playlist, currentIndex]);
 
+    // 重新排列播放列表
+    const reorderPlaylist = (fromIndex, toIndex) => {
+        const newPlaylist = [...playlist];
+        const [movedItem] = newPlaylist.splice(fromIndex, 1);
+        newPlaylist.splice(toIndex, 0, movedItem);
+        
+        // 更新当前播放索引
+        let newCurrentIndex = currentIndex;
+        
+        if (fromIndex === currentIndex) {
+            // 移动的是当前播放的歌曲
+            newCurrentIndex = toIndex;
+        } else if (fromIndex < currentIndex && toIndex >= currentIndex) {
+            // 从前面移到后面，当前索引-1
+            newCurrentIndex = currentIndex - 1;
+        } else if (fromIndex > currentIndex && toIndex <= currentIndex) {
+            // 从后面移到前面，当前索引+1
+            newCurrentIndex = currentIndex + 1;
+        }
+        
+        setPlaylist(newPlaylist);
+        setCurrentIndex(newCurrentIndex);
+    };
+
     const value = {
         currentMusic,
         isPlaying,
@@ -304,6 +316,7 @@ export const PlayerProvider = ({ children }) => {
         setIsPlaying,
         clearPlaylist,
         removeFromPlaylist,
+        reorderPlaylist,
         audioRef,
         currentTime,
         duration,

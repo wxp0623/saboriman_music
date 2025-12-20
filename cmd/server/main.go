@@ -7,6 +7,7 @@ import (
 	"saboriman-music/internal/db"
 	"saboriman-music/internal/handler" // 1. 导入 handler 包
 	"saboriman-music/internal/router"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -65,13 +66,30 @@ func main() {
 	app.Static("/music/.covers", "/music/.covers")
 	app.Static("/", "./frontend/dist")
 	// 静态文件服务 - 提供音乐文件访问
-	app.Static("/music", "/music", fiber.Static{
+
+	appBasePath := config.AppConfig.AppBasePath
+	app.Static("/music", appBasePath+"/music", fiber.Static{
 		Browse:    false,
 		ByteRange: true, // 支持断点续传
 	})
 
 	// 5. 将 *gorm.DB 实例传递给路由设置函数
 	router.SetupRoutes(app, gormDB)
+
+	// SPA 路由回退：把非 /api 开头的所有请求回退到 index.html
+	app.Use(func(c *fiber.Ctx) error {
+		// 已处理的或 API 请求直接继续
+		if c.Path() == "/" || c.Path() == "/index.html" || strings.HasPrefix(c.Path(), "/api") {
+			return c.Next()
+		}
+		// 如果是静态资源存在则直接返回
+		if strings.HasPrefix(c.Path(), "/assets") {
+			return c.Next()
+		}
+		// 回退到 index.html
+		c.Set("Content-Type", "text/html; charset=utf-8")
+		return c.SendFile("./frontend/dist/index.html")
+	})
 
 	// 启动服务器
 	addr := fmt.Sprintf(":%d", cfg.Port)

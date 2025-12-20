@@ -1,28 +1,40 @@
-import React from 'react';
-import './liquid-glass.css';
+import React, { useMemo } from 'react';
 
 const LiquidGlass = ({
   children,
   className = '',
-  blur = 10,
-  opacity = 0.55,
-  radius = 18,
-  colorRgb, // 新增 colorRgb prop，不设默认值
-  border = true,
-  style = {},
+  radius = true,
+  cornerRadius,
   ...props
 }) => {
+  const classList = useMemo(() => {
+    let classes = 'sbrm-bg-glass sbrm-backdrop-blur sbrm-border sbrm-border-tertiary ';
+    
+    if (className) {
+      classes += className + ' ';
+    }
+    
+    if (radius) {
+      classes += 'sbrm-rounded ';
+    }
+    
+    return classes.trim();
+  }, [className, radius]);
 
+  const style = useMemo(() => {
+    if (cornerRadius) {
+      return { borderRadius: `${cornerRadius}px` };
+    }
+    return {};
+  }, [cornerRadius]);
 
   return (
     <div
-      className={`liquid-glass ${border ? 'liquid-glass--border' : ''} ${className}`}
-      style={{  ...style, borderRadius: radius ?? 18}}
+      className={classList}
+      style={style}
       {...props}
     >
-      <div className="liquid-glass__inner">
-        {children}
-      </div>
+      {children}
     </div>
   );
 };

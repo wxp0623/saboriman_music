@@ -1,0 +1,6 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.synthwave {
+  @include theme-variables($synthwave-bg, $synthwave-text, $synthwave-border, $synthwave-accent, $synthwave-radius);
+}

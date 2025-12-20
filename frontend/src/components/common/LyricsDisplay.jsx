@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const LyricsDisplay = ({ lyrics, currentTime }) => {
+const LyricsDisplay = ({ lyrics, translation, currentTime }) => {
     const [parsedLyrics, setParsedLyrics] = useState([]);
+    const [parsedTranslation, setParsedTranslation] = useState([]);
     const [currentLineIndex, setCurrentLineIndex] = useState(-1);
     const containerRef = useRef(null);
     const lineRefs = useRef([]);
@@ -39,12 +40,17 @@ const LyricsDisplay = ({ lyrics, currentTime }) => {
         return parsed.sort((a, b) => a.time - b.time);
     };
 
-    /** ------- ② 设置歌词 ------- **/
+    /** ------- ② 设置歌词和翻译 ------- **/
     useEffect(() => {
         const parsed = parseLyrics(lyrics);
         setParsedLyrics(parsed);
         lineRefs.current = new Array(parsed.length);
     }, [lyrics]);
+
+    useEffect(() => {
+        const parsed = parseLyrics(translation);
+        setParsedTranslation(parsed);
+    }, [translation]);
 
     /** ------- ③ 根据播放时间定位歌词行 ------- **/
     useEffect(() => {
@@ -76,7 +82,6 @@ const LyricsDisplay = ({ lyrics, currentTime }) => {
             const containerHeight = container.clientHeight;
             const scrollHeight = container.scrollHeight;
 
-            // ⭐ 重点：使用统一固定高度的行，不受放大缩小影响 offsetTop
             const lineTop = currentLine.offsetTop;
             const lineHeight = currentLine.offsetHeight;
 
@@ -110,58 +115,110 @@ const LyricsDisplay = ({ lyrics, currentTime }) => {
         });
     }, [currentLineIndex]);
 
-    /** ------- ⑤ 渲染歌词（不再被裁剪） ------- **/
+    /** ------- ⑥ 获取对应时间的翻译 ------- **/
+    const getTranslationForIndex = (index) => {
+        if (index < 0 || index >= parsedLyrics.length) return '';
+        if (parsedTranslation.length === 0) return '';
+
+        const currentTime = parsedLyrics[index].time;
+        
+        // 查找时间最接近的翻译（允许 1 秒误差）
+        let closestTranslation = '';
+        let minDiff = 1.0; // 增加误差容忍度到 1 秒
+        
+        for (let i = 0; i < parsedTranslation.length; i++) {
+            const diff = Math.abs(parsedTranslation[i].time - currentTime);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestTranslation = parsedTranslation[i].text;
+            }
+        }
+        
+        return closestTranslation;
+    };
+
+    /** ------- ⑤ 渲染歌词（支持双语） ------- **/
     return (
         <div
             ref={containerRef}
-            className="h-full overflow-y-auto px-4 relative"
-            style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-            }}
+            className="h-full overflow-y-auto px-4 relative sbrm-scroll-y"
         >
             <div className="py-28" />
 
-            {parsedLyrics.map((line, index) => {
-                const isCurrent = index === currentLineIndex;
-                const distance = Math.abs(index - currentLineIndex);
+            {parsedLyrics.length > 0 ? (
+                parsedLyrics.map((line, index) => {
+                    const isCurrent = index === currentLineIndex;
+                    const distance = Math.abs(index - currentLineIndex);
+                    const translationText = getTranslationForIndex(index);
 
-                const opacity =
-                    distance === 0 ? 1 :
-                        distance === 1 ? 0.75 :
-                            distance === 2 ? 0.45 : 0.25;
-
-                return (
-                    <div
-                        key={`${line.time}-${index}`}
-                        ref={el => (lineRefs.current[index] = el)}
-                        style={{
-                            height: "54px",        // ⭐ 固定高度（网易云的秘诀）
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            overflow: "visible",
-                            margin: "12px 0",
-                        }}
-                    >
+                    return (
                         <div
-                            className="transition-all duration-300 origin-center select-none text-center"
+                            key={`${line.time}-${index}`}
+                            ref={el => (lineRefs.current[index] = el)}
+                            className="flex flex-col items-center justify-center overflow-visible my-3"
                             style={{
-                                transform: `scale(${isCurrent ? 1.25 : 1})`,
-                                opacity,
-                                fontSize: isCurrent ? "1.95rem" : "1.35rem",
-                                fontWeight: isCurrent ? 700 : 400,
-                                lineHeight: "1.35",
-                                color: "#fff",
-                                whiteSpace: "nowrap",
-                                overflow: "visible",
+                                height: translationText ? "84px" : "54px",
                             }}
                         >
-                            {line.text}
+                            {/* 原文歌词 */}
+                            <div
+                                className={`sbrm-transition-all origin-center select-none text-center ${
+                                    isCurrent 
+                                        ? 'sbrm-text-primary' 
+                                        : distance === 1 
+                                            ? 'sbrm-text-primary-1' 
+                                            : 'sbrm-text-primary-2'
+                                }`}
+                                style={{
+                                    transform: `scale(${isCurrent ? 1.25 : 1})`,
+                                    opacity: distance === 0 ? 1 :
+                                             distance === 1 ? 0.75 :
+                                             distance === 2 ? 0.45 : 0.25,
+                                    fontSize: isCurrent ? "1.95rem" : "1.35rem",
+                                    fontWeight: isCurrent ? 700 : 400,
+                                    lineHeight: "1.35",
+                                    whiteSpace: "nowrap",
+                                    overflow: "visible",
+                                }}
+                            >
+                                {line.text}
+                            </div>
+
+                            {/* 翻译歌词 */}
+                            {translationText && (
+                                <div
+                                    className={`sbrm-transition-all origin-center select-none text-center mt-1.5 ${
+                                        isCurrent 
+                                            ? 'sbrm-text-primary-1' 
+                                            : 'sbrm-text-primary-2'
+                                    }`}
+                                    style={{
+                                        transform: `scale(${isCurrent ? 1.1 : 0.95})`,
+                                        opacity: (distance === 0 ? 1 :
+                                                 distance === 1 ? 0.75 :
+                                                 distance === 2 ? 0.45 : 0.25) * 0.85,
+                                        fontSize: isCurrent ? "1.15rem" : "0.95rem",
+                                        fontWeight: isCurrent ? 500 : 400,
+                                        lineHeight: "1.4",
+                                        whiteSpace: "nowrap",
+                                        overflow: "visible",
+                                    }}
+                                >
+                                    {translationText}
+                                </div>
+                            )}
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })
+            ) : (
+                <div className="flex flex-col items-center justify-center h-full">
+                    <i className="fas fa-music text-6xl sbrm-text-tertiary mb-4 sbrm-opacity-50"></i>
+                    <p className="sbrm-text-tertiary text-lg">暂无歌词</p>
+                    <p className="sbrm-text-tertiary text-sm mt-2 sbrm-opacity-70">
+                        您可以点击搜索按钮查找歌词
+                    </p>
+                </div>
+            )}
 
             <div className="py-32" />
         </div>

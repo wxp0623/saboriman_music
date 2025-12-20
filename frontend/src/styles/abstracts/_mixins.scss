@@ -1,0 +1,258 @@
+@use 'functions' as *;
+
+// 生成主题变量
+@mixin theme-variables($bg, $text, $border, $accent, $radius) {
+  // ==================== 背景色系 ====================
+  // 基础背景 - 8个层次
+  --bg-primary: #{$bg};
+  --bg-primary-1: #{darken-color($bg, 4%)};
+  --bg-primary-2: #{darken-color($bg, 8%)};
+  --bg-primary-3: #{darken-color($bg, 12%)};
+  --bg-secondary: #{lighten-color($bg, 3%)};
+  --bg-secondary-1: #{lighten-color($bg, 6%)};
+  --bg-tertiary: #{darken-color($bg, 2%)};
+  
+  // 交互状态背景
+  --bg-hover: #{darken-color($bg, 6%)};
+  --bg-active: #{darken-color($bg, 10%)};
+  --bg-selected: #{darken-color($bg, 8%)};
+  --bg-disabled: #{lighten-color($bg, 10%)};
+  
+  // 玻璃态效果
+  --bg-glass: #{rgba($bg, 0.7)};
+  --bg-glass-hover: #{rgba($bg, 0.85)};
+  --bg-glass-light: #{rgba($bg, 0.5)};
+  --bg-glass-dark: #{rgba($bg, 0.9)};
+  
+  // 卡片和面板
+  --bg-card: #{lighten-color($bg, 2%)};
+  --bg-card-hover: #{lighten-color($bg, 4%)};
+  --bg-panel: #{darken-color($bg, 3%)};
+  --bg-sidebar: #{darken-color($bg, 5%)};
+  --bg-header: #{lighten-color($bg, 1%)};
+  --bg-footer: #{darken-color($bg, 4%)};
+  
+  // 遮罩层
+  --bg-overlay: #{rgba($bg, 0.8)};
+  --bg-overlay-light: #{rgba($bg, 0.6)};
+  --bg-overlay-dark: #{rgba($bg, 0.95)};
+  --bg-modal: #{rgba(0, 0, 0, 0.5)};
+  --bg-backdrop: #{rgba(0, 0, 0, 0.3)};
+  
+  // ==================== 文字色系 ====================
+  // 主要文字 - 8个层次
+  --text-primary: #{$text};
+  --text-primary-1: #{lighten-color($text, 8%)};
+  --text-primary-2: #{lighten-color($text, 15%)};
+  --text-primary-3: #{lighten-color($text, 22%)};
+  --text-secondary: #{lighten-color($text, 30%)};
+  --text-secondary-1: #{lighten-color($text, 38%)};
+  --text-tertiary: #{lighten-color($text, 45%)};
+  --text-tertiary-1: #{lighten-color($text, 52%)};
+  
+  // 状态文字
+  --text-disabled: #{lighten-color($text, 60%)};
+  --text-placeholder: #{lighten-color($text, 65%)};
+  --text-muted: #{lighten-color($text, 55%)};
+  --text-subtle: #{lighten-color($text, 50%)};
+  
+  // 特殊用途文字
+  --text-link: #{$accent};
+  --text-link-hover: #{darken-color($accent, 10%)};
+  --text-link-active: #{darken-color($accent, 15%)};
+  --text-link-visited: #{darken-color($accent, 20%)};
+  
+  // 反色文字（用于深色背景）
+  --text-inverse: #{lighten-color($text, 85%)};
+  --text-on-accent: #ffffff;
+  --text-on-dark: #ffffff;
+  
+  // 标题文字
+  --text-heading: #{$text};
+  --text-heading-1: #{lighten-color($text, 5%)};
+  --text-heading-2: #{lighten-color($text, 10%)};
+  
+  // ==================== 边框色系 ====================
+  // 基础边框 - 6个层次
+  --border-primary: #{$border};
+  --border-primary-1: #{darken-color($border, 5%)};
+  --border-primary-2: #{darken-color($border, 10%)};
+  --border-secondary: #{lighten-color($border, 5%)};
+  --border-secondary-1: #{lighten-color($border, 10%)};
+  --border-tertiary: #{lighten-color($border, 15%)};
+  
+  // 交互状态边框
+  --border-hover: #{darken-color($border, 15%)};
+  --border-active: #{darken-color($border, 20%)};
+  --border-focus: #{$accent};
+  --border-selected: #{$accent};
+  --border-disabled: #{lighten-color($border, 20%)};
+  
+  // 分隔线
+  --border-divider: #{lighten-color($border, 8%)};
+  --border-divider-light: #{lighten-color($border, 12%)};
+  --border-divider-heavy: #{darken-color($border, 5%)};
+  
+  // 特殊边框
+  --border-error: #dc2626;
+  --border-warning: #f59e0b;
+  --border-success: #10b981;
+  --border-info: #3b82f6;
+  
+  // ==================== 强调色系 ====================
+  // 主强调色 - 8个层次
+  --accent-primary: #{$accent};
+  --accent-primary-1: #{darken-color($accent, 5%)};
+  --accent-primary-2: #{darken-color($accent, 10%)};
+  --accent-primary-3: #{darken-color($accent, 15%)};
+  --accent-secondary: #{lighten-color($accent, 8%)};
+  --accent-secondary-1: #{lighten-color($accent, 15%)};
+  --accent-tertiary: #{lighten-color($accent, 22%)};
+  --accent-tertiary-1: #{lighten-color($accent, 30%)};
+  
+  // 交互状态强调色
+  --accent-hover: #{darken-color($accent, 8%)};
+  --accent-active: #{darken-color($accent, 18%)};
+  --accent-pressed: #{darken-color($accent, 25%)};
+  --accent-disabled: #{lighten-color($accent, 40%)};
+  
+  // 渐变强调色
+  --accent-gradient-start: #{$accent};
+  --accent-gradient-end: #{darken-color($accent, 15%)};
+  --accent-gradient: linear-gradient(135deg, #{$accent}, #{darken-color($accent, 15%)});
+  
+  // 透明强调色
+  --accent-alpha-10: #{rgba($accent, 0.1)};
+  --accent-alpha-20: #{rgba($accent, 0.2)};
+  --accent-alpha-30: #{rgba($accent, 0.3)};
+  --accent-alpha-50: #{rgba($accent, 0.5)};
+  --accent-alpha-70: #{rgba($accent, 0.7)};
+  
+  // ==================== 状态色系 ====================
+  // 成功状态
+  --color-success: #10b981;
+  --color-success-light: #d1fae5;
+  --color-success-dark: #047857;
+  --bg-success: #{rgba(#10b981, 0.1)};
+  --border-success: #10b981;
+  
+  // 错误状态
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-error-dark: #b91c1c;
+  --bg-error: #{rgba(#ef4444, 0.1)};
+  --border-error: #ef4444;
+  
+  // 警告状态
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-warning-dark: #d97706;
+  --bg-warning: #{rgba(#f59e0b, 0.1)};
+  --border-warning: #f59e0b;
+  
+  // 信息状态
+  --color-info: #3b82f6;
+  --color-info-light: #dbeafe;
+  --color-info-dark: #1e40af;
+  --bg-info: #{rgba(#3b82f6, 0.1)};
+  --border-info: #3b82f6;
+  
+  // ==================== 阴影系统 ====================
+  // 基础阴影 - 6个层次
+  --shadow-xs: 0 1px 2px 0 #{rgba($accent, 0.05)};
+  --shadow-sm: 0 2px 4px 0 #{rgba($accent, 0.08)};
+  --shadow-md: 0 4px 8px 0 #{rgba($accent, 0.12)};
+  --shadow-lg: 0 8px 16px 0 #{rgba($accent, 0.16)};
+  --shadow-xl: 0 12px 24px 0 #{rgba($accent, 0.20)};
+  --shadow-2xl: 0 24px 48px 0 #{rgba($accent, 0.25)};
+  
+  // 内阴影
+  --shadow-inner: inset 0 2px 4px 0 #{rgba(0, 0, 0, 0.06)};
+  --shadow-inner-lg: inset 0 4px 8px 0 #{rgba(0, 0, 0, 0.1)};
+  
+  // 特殊阴影
+  --shadow-glow: 0 0 20px #{rgba($accent, 0.4)};
+  --shadow-glow-sm: 0 0 10px #{rgba($accent, 0.3)};
+  --shadow-glow-lg: 0 0 30px #{rgba($accent, 0.5)};
+  
+  // 卡片阴影
+  --shadow-card: 0 2px 8px #{rgba(0, 0, 0, 0.08)};
+  --shadow-card-hover: 0 8px 24px #{rgba(0, 0, 0, 0.12)};
+  
+  // ==================== 圆角系统 ====================
+  --border-radius: #{$radius};
+  --border-radius-sm: #{$radius * 0.5};
+  --border-radius-md: #{$radius};
+  --border-radius-lg: #{$radius * 1.5};
+  --border-radius-xl: #{$radius * 2};
+  --border-radius-2xl: #{$radius * 3};
+  --border-radius-full: 9999px;
+  --border-radius-none: 0;
+  
+  // ==================== 间距系统 ====================
+  --spacing-xs: 0.25rem;    // 4px
+  --spacing-sm: 0.5rem;     // 8px
+  --spacing-md: 1rem;       // 16px
+  --spacing-lg: 1.5rem;     // 24px
+  --spacing-xl: 2rem;       // 32px
+  --spacing-2xl: 3rem;      // 48px
+  --spacing-3xl: 4rem;      // 64px
+  
+  // ==================== 字体大小 ====================
+  --font-size-xs: 0.75rem;    // 12px
+  --font-size-sm: 0.875rem;   // 14px
+  --font-size-base: 1rem;     // 16px
+  --font-size-lg: 1.125rem;   // 18px
+  --font-size-xl: 1.25rem;    // 20px
+  --font-size-2xl: 1.5rem;    // 24px
+  --font-size-3xl: 1.875rem;  // 30px
+  --font-size-4xl: 2.25rem;   // 36px
+  
+  // ==================== 字重系统 ====================
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  // ==================== 行高系统 ====================
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 2;
+  
+  // ==================== 过渡动画 ====================
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-all: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // ==================== Z-index 层级 ====================
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  
+  // ==================== 模糊效果 ====================
+  --blur-sm: 4px;
+  --blur-md: 8px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  
+  // ==================== 不透明度 ====================
+  --opacity-0: 0;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-100: 1;
+}

@@ -1,0 +1,6 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+.forest {
+  @include theme-variables($forest-bg, $forest-text, $forest-border, $forest-accent, $forest-radius);
+}

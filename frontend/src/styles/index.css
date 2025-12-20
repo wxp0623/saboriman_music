@@ -1,3 +1,6 @@
+/* 导入 SASS 主文件 */
+@import './main.scss';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,7 +13,6 @@
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Use CSS variables for background and text color */
     background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -25,104 +27,52 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--border-secondary);
+    background-color: var(--border-secondary);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-primary);
+    background-color: var(--accent-primary);
   }
 }
 
 @layer components {
   .music-card {
-    @apply transition-all duration-300 rounded-xl overflow-hidden;
+    transition: all 0.3s;
+    border-radius: 0.75rem;
+    overflow: hidden;
   }
   
   .music-card:hover {
-    @apply -translate-y-1 shadow-xl;
-  }
-  
-  .gradient-bg {
-    @apply bg-gradient-to-br from-accent-primary to-accent-secondary;
-  }
-  
-  .glass-effect {
-    backdrop-filter: blur(10px);
-    background: var(--bg-glass);
-    border: 1px solid var(--border-primary);
-  }
-  
-  .sidebar {
-    /* Example of a dark gradient that works with themes */
-    @apply bg-gradient-to-b from-background-secondary to-background-primary;
+    transform: translateY(-0.25rem);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
   
   .loading-spinner {
-    @apply border-4 border-border-primary border-t-accent-primary rounded-full w-10 h-10 animate-spin;
+    border: 4px solid var(--border-primary);
+    border-top-color: var(--accent-primary);
+    border-radius: 9999px;
+    width: 2.5rem;
+    height: 2.5rem;
+    animation: spin 1s linear infinite;
   }
-  
-  .btn-primary {
-    @apply bg-gradient-to-r from-accent-primary to-accent-secondary text-white px-5 py-2.5 rounded-lg cursor-pointer transition-all duration-300 border-none;
-  }
-  
-  .btn-primary:hover {
-    @apply -translate-y-0.5 shadow-lg;
-    box-shadow: 0 5px 15px var(--accent-primary);
-    opacity: 0.9;
-  }
-  
-  .form-input {
-    @apply w-full px-3 py-2 border border-border-primary bg-background-secondary rounded-md text-sm transition-colors duration-200;
-  }
-  
-  .form-input:focus {
-    @apply outline-none border-accent-primary ring-2 ring-accent-primary ring-opacity-[0.2];
-  }
-  
+
   .modal-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    background-color: rgba(0, 0, 0, 0.5);
   }
   
   .modal-content {
-    @apply bg-background-secondary rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto;
-  }
-  
-  .data-table {
-    @apply w-full border-collapse;
-  }
-  
-  .data-table th,
-  .data-table td {
-    @apply px-3 py-3 text-left border-b border-border-primary;
-  }
-  
-  .data-table th {
-    @apply bg-background-secondary bg-opacity-50 font-semibold text-text-primary;
-  }
-  
-  .data-table tr:hover {
-    @apply bg-background-secondary bg-opacity-40;
-  }
-}
-
-/* Custom animations */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .modal-content {
-    @apply m-4 p-4;
-  }
-  
-  .data-table {
-    @apply text-sm;
-  }
-  
-  .data-table th,
-  .data-table td {
-    @apply px-2 py-2;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 32rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--bg-secondary);
   }
 }

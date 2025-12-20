@@ -15,20 +15,23 @@ import Login from './components/login/Login.jsx';
 // 受保护的路由组件
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
-    
+
     if (!token) {
         return <Navigate to="/login" replace />;
     }
-    
+
     return children;
 };
 
 function App() {
+
     return (
-        <div style={{
-            position: "relative",
-            minHeight: "100vh"
-        }}>
+        <div
+            className='sbrm-bg-primary-2'
+            style={{
+                position: "relative",
+                minHeight: "100vh",
+            }}>
             {/* 背景图片层 */}
             <div style={{
                 position: "fixed",
@@ -36,13 +39,13 @@ function App() {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundImage: "url(http://192.168.1.193:5244/d/8.jpg?sign=Nd4oGycnzi-Qw9avgWnkL9C5e981IDlx8AGppL9xbcI=:0)",
+                // backgroundImage: "url(http://192.168.1.193:5244/d/8.jpg?sign=Nd4oGycnzi-Qw9avgWnkL9C5e981IDlx8AGppL9xbcI=:0)",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundAttachment: "fixed",
                 zIndex: -2
-            }}></div>
-            
+            }} ></div>
+
             {/* 暗色遮罩层 */}
             <div style={{
                 position: "fixed",
@@ -60,7 +63,7 @@ function App() {
                         <Routes>
                             {/* 登录路由 - 不需要认证 */}
                             <Route path="/login" element={<Login />} />
-                            
+
                             {/* 受保护的路由 - 需要认证 */}
                             <Route path="/" element={
                                 <ProtectedRoute>
@@ -70,7 +73,7 @@ function App() {
                                 <Route index element={<Navigate to="/musics" replace />} />
                                 <Route path="musics" element={<MusicManagement />} />
                                 <Route path="dashboard" element={<Dashboard />} />
-                                <Route path="users" element={<UsersManagement/>} />
+                                <Route path="users" element={<UsersManagement />} />
                                 <Route path="playlists" element={<PlaylistManagement />} />
                                 <Route path="database" element={<DatabaseManagement />} />
                                 <Route path="album" element={<AlbumManagement />} />

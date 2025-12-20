@@ -27,6 +27,8 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	lyrics := api.Group("/lyrics")
 	lyrics.Get("/search", lyricsHandler.SearchLyricsProxy)
 	lyrics.Get("/get", lyricsHandler.GetLyricsByIdProxy)
+	lyrics.Post("/:id/lyrics", lyricsHandler.SaveLyrics)              // 新增：保存歌词
+	lyrics.Post("/:id/tlyrics", lyricsHandler.SaveTranslatiionLyrics) // 新增：保存歌词
 
 	// 需要认证的路由
 	protected := api.Group("", middleware.AuthMiddleware())
@@ -53,8 +55,7 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	musics.Get("/:id", musicHandler.GetMusic)
 	musics.Put("/:id", musicHandler.UpdateMusic)
 	musics.Delete("/:id", musicHandler.DeleteMusic)
-	musics.Get("/:id/lyrics", musicHandler.GetLyrics)   // 新增：获取歌词
-	musics.Post("/:id/lyrics", musicHandler.SaveLyrics) // 新增：保存歌词
+	musics.Get("/:id/lyrics", musicHandler.GetLyrics) // 新增：获取歌词
 	musics.Post("/:id/play", musicHandler.PlayMusic)
 	musics.Post("/:id/like", musicHandler.LikeMusic)
 	musics.Post("/scan", musicHandler.ScanLibrary)

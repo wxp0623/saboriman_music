@@ -67,7 +67,7 @@ const DatabaseManagement = () => {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">
+                    <h2 className="text-3xl font-bold text-gray-800 dark:--text-primary-1">
                         🗄️ 数据库管理
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -77,7 +77,7 @@ const DatabaseManagement = () => {
                 <button 
                     onClick={handleMigrate} 
                     disabled={migrating}
-                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg transition-colors duration-200"
+                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50  rounded-lg transition-colors duration-200"
                 >
                     {migrating ? (
                         <>
@@ -140,7 +140,7 @@ const DatabaseManagement = () => {
                         icon="🗄️"
                         message="暂无数据表信息"
                         action={
-                            <button onClick={fetchTables} className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                            <button onClick={fetchTables} className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600  rounded-lg">
                                 🔄 刷新状态
                             </button>
                         }

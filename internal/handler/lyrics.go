@@ -2,11 +2,16 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
+	"saboriman-music/internal/entity"
 	"saboriman-music/internal/utils"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -188,4 +193,108 @@ func (h *LyricsHandler) GetLyricsByIdProxy(c *fiber.Ctx) error {
 	// 设置响应头并返回 JSON
 	c.Set("Content-Type", "application/json; charset=utf-8")
 	return c.Send(body)
+}
+
+// SaveLyrics 保存歌词
+func (h *LyricsHandler) SaveLyrics(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	// 解析请求体
+	var req struct {
+		Lyrics string `json:"lyrics"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return utils.SendError(c, "请求参数解析失败")
+	}
+
+	if req.Lyrics == "" {
+		return utils.SendError(c, "歌词内容不能为空")
+	}
+
+	// 查询音乐信息
+	var music entity.Music
+	if err := h.db.First(&music, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return utils.SendError(c, "音乐不存在")
+		}
+		return utils.SendError(c, "查询音乐失败")
+	}
+
+	// 获取音乐文件所在目录
+	musicPath := music.FileUrl
+	musicDir := filepath.Dir(musicPath)
+	musicFileName := filepath.Base(musicPath)
+
+	// 构建歌词文件路径：音乐文件夹/lyrics/歌曲名.lrc
+	lyricsDir := filepath.Join(musicDir, "lyrics")
+	lyricsFileName := strings.TrimSuffix(musicFileName, filepath.Ext(musicFileName)) + ".lrc"
+	lyricsPath := filepath.Join(lyricsDir, lyricsFileName)
+
+	// 确保 lyrics 目录存在
+	if err := os.MkdirAll(lyricsDir, 0755); err != nil {
+		return utils.SendError(c, "创建歌词目录失败: "+err.Error())
+	}
+
+	// 写入歌词文件
+	if err := os.WriteFile(lyricsPath, []byte(req.Lyrics), 0644); err != nil {
+		return utils.SendError(c, "保存歌词文件失败: "+err.Error())
+	}
+
+	fmt.Printf("原文歌词已保存到: %s\n", lyricsPath)
+
+	return utils.SendSuccess(c, "歌词保存成功", fiber.Map{
+		"lyrics_path": lyricsPath,
+	})
+}
+
+// SaveTranslatiionLyrics 保存翻译歌词
+func (h *LyricsHandler) SaveTranslatiionLyrics(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	// 解析请求体
+	var req struct {
+		Lyrics string `json:"lyrics"`
+	}
+	if err := c.BodyParser(&req); err != nil {
+		return utils.SendError(c, "请求参数解析失败")
+	}
+
+	if req.Lyrics == "" {
+		return utils.SendError(c, "歌词内容不能为空")
+	}
+
+	// 查询音乐信息
+	var music entity.Music
+	if err := h.db.First(&music, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return utils.SendError(c, "音乐不存在")
+		}
+		return utils.SendError(c, "查询音乐失败")
+	}
+
+	// 获取音乐文件所在目录
+	musicPath := music.FileUrl
+	musicDir := filepath.Dir(musicPath)
+	musicFileName := filepath.Base(musicPath)
+
+	// 构建翻译歌词文件路径：音乐文件夹/lyrics/歌曲名.zh.lrc
+	lyricsDir := filepath.Join(musicDir, "lyrics")
+	translationFileName := strings.TrimSuffix(musicFileName, filepath.Ext(musicFileName)) + ".zh.lrc"
+	translationPath := filepath.Join(lyricsDir, translationFileName)
+
+	// 确保 lyrics 目录存在
+	if err := os.MkdirAll(lyricsDir, 0755); err != nil {
+		return utils.SendError(c, "创建歌词目录失败: "+err.Error())
+	}
+
+	// 写入翻译歌词文件
+	if err := os.WriteFile(translationPath, []byte(req.Lyrics), 0644); err != nil {
+		return utils.SendError(c, "保存翻译歌词文件失败: "+err.Error())
+	}
+
+	fmt.Printf("翻译歌词已保存到: %s\n", translationPath)
+
+	return utils.SendSuccess(c, "翻译歌词保存成功", fiber.Map{
+		"lyrics_path": translationPath,
+	})
 }

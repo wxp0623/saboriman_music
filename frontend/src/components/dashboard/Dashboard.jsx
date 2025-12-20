@@ -88,7 +88,7 @@ const Dashboard = () => {
         <div className="min-h-screen p-6  from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors">
             <LiquidGlass className="p-6 mb-6">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">
+                    <h2 className="text-3xl font-bold text-gray-800 dark:--text-primary-1">
                         📊 仪表板
                     </h2>
                     <div className="text-sm text-gray-600 dark:text-gray-400 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
@@ -105,7 +105,7 @@ const Dashboard = () => {
                             className="p-6 hover:scale-105 transition-transform duration-200"
                         >
                             <div className="flex items-center">
-                                <div className={`${card.color} text-white rounded-full p-3 mr-4 shadow-lg`}>
+                                <div className={`${card.color}  rounded-full p-3 mr-4 shadow-lg`}>
                                     <span className="text-2xl">{card.icon}</span>
                                 </div>
                                 <div>
@@ -130,7 +130,7 @@ const Dashboard = () => {
                         <Link
                             key={index}
                             to={action.path}
-                            className={`${action.color} text-white px-6 py-4 rounded-lg transition-all duration-200 text-center block font-medium shadow-lg hover:shadow-xl hover:scale-105`}
+                            className={`${action.color}  px-6 py-4 rounded-lg transition-all duration-200 text-center block font-medium shadow-lg hover:shadow-xl hover:scale-105`}
                         >
                             {action.label}
                         </Link>

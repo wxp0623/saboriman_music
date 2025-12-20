@@ -11,6 +11,7 @@ import (
 // Config 结构体用于映射 TOML 文件中的所有配置项
 type Config struct {
 	MusicFolder string
+	AppBasePath string
 	Port        int
 	LogLevel    string
 	Database    struct {
@@ -29,18 +30,23 @@ var AppConfig *Config
 
 // LoadConfig 从文件或环境变量中加载配置
 func LoadConfig() (*Config, error) {
+	env := strings.ToLower(strings.TrimSpace(os.Getenv("GO_ENV")))
+	if env == "" {
+		env = "development"
+	}
 	v := viper.New()
+	// 设置配置文件
+	v.SetConfigName("config") // 配置文件名 (不带扩展名)
+	v.SetConfigType("toml")   // 配置文件类型
 
-	// 1. 设置默认值
-	v.SetDefault("Port", 8180)
-	v.SetDefault("LogLevel", "info")
-	v.SetDefault("Database.Type", "sqlite") // 默认使用 sqlite
-	v.SetDefault("Database.Path", "saboriman.db")
-	v.SetDefault("Database.Host", "localhost")
-	v.SetDefault("Database.Port", 3306)
-	v.SetDefault("Database.User", "root")
-	v.SetDefault("Database.Password", "")
-	v.SetDefault("Database.Name", "saboriman")
+	if env == "production" {
+		fmt.Println("🚀 加载生产环境配置...")
+		// 生产环境的配置加载逻辑
+		v.AddConfigPath("/app/config") // 容器内的配置路径
+	} else {
+		fmt.Println("🛠️  加载开发环境配置...")
+		v.AddConfigPath("./config/dev") // 项目根目录下的 config/ 文件夹
+	}
 
 	// 2. 打印当前工作目录，用于最终诊断
 	wd, err := os.Getwd()
@@ -49,13 +55,6 @@ func LoadConfig() (*Config, error) {
 	} else {
 		fmt.Printf("ℹ️  当前工作目录是: %s\n", wd)
 	}
-
-	// 设置配置文件
-	v.SetConfigName("config")    // 配置文件名 (不带扩展名)
-	v.SetConfigType("toml")      // 配置文件类型
-	v.AddConfigPath("./config/") // 路径1: 项目根目录下的 config/ 文件夹
-	v.AddConfigPath("/config")   // 路径2: 容器根目录下的 /config 文件夹
-	v.AddConfigPath(".")         // 路径3: 项目根目录
 
 	// 读取配置文件
 	if err := v.ReadInConfig(); err != nil {

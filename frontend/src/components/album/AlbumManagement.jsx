@@ -12,7 +12,7 @@ const AlbumManagement = () => {
             {/* 页面标题和操作栏 */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">专辑管理</h1>
+                    <h1 className="text-3xl font-bold  mb-2">专辑管理</h1>
                     <p className="text-gray-400">管理所有音乐专辑</p>
                 </div>
             </div>

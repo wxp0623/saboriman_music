@@ -1,0 +1,86 @@
+# =======================
+# 构建前端
+# =======================
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# 复制 package.json 及 package-lock.json
+COPY frontend/package*.json ./
+
+# 安装依赖
+RUN npm ci --production=false
+
+# 复制前端源码
+COPY frontend/ ./
+
+# 构建前端
+RUN npm run build
+
+# ✅ 验证构建产物
+RUN ls -la dist/
+
+# =======================
+# 构建后端
+# =======================
+FROM golang:1.22-alpine AS backend-builder
+
+WORKDIR /app
+
+# 安装构建依赖
+RUN apk add --no-cache git gcc musl-dev
+
+# 复制 Go 模块文件并下载依赖
+COPY go.mod go.sum ./
+RUN go mod download
+
+# ✅ 复制源码
+COPY . .
+
+# ✅ 关键：将前端构建产物复制到 cmd/server/ 目录下
+RUN mkdir -p cmd/server/frontend
+COPY --from=frontend-builder /app/frontend/dist ./cmd/server/frontend/dist
+
+# ✅ 验证 embed 文件存在
+RUN ls -la cmd/server/frontend/dist/
+
+# 构建 Go 可执行文件
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o main ./cmd/server
+
+# =======================
+# 运行阶段
+# =======================
+FROM alpine:latest
+
+# 安装运行时依赖
+RUN apk --no-cache add ca-certificates tzdata wget
+
+# ============================ 复制可执行文件 ==========================
+# 容器路径 = /app (工作目录) <==== 容器创建时所在路径
+#=====================================================================
+WORKDIR /app
+
+# 复制可执行文件
+COPY --from=backend-builder /app/main ./
+
+# ✅ 备用：复制前端文件到运行镜像
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+
+# ✅ 复制配置文件目录
+COPY --from=backend-builder /app/config ./config
+
+# 设置时区
+ENV TZ=Asia/Tokyo
+
+# 创建必要目录
+RUN mkdir -p /app/uploads
+
+# 暴露端口
+EXPOSE 8180
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:8180/api/health || exit 1
+
+# 启动命令
+CMD ["./main"]

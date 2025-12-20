@@ -91,11 +91,9 @@ const MusicManagement = () => {
     const fetchAlbums = async (albumId) => {
         try {
             const response = await api.albums.get(albumId);
-            console.log('Fetched Album:', response);
 
             if (!response.error && response.data) {
                 setAlbum(response.data);
-                console.log('Album set:', response.data);
             }
         } catch (error) {
             console.error('Failed to fetch album:', error);
@@ -135,7 +133,6 @@ const MusicManagement = () => {
 
             // 请求音乐列表
             const response = await api.musics.list(params);
-            console.log('Fetched Musics:', response);
 
             if (response.data) {
                 setMusics(response.data.data || []);
@@ -285,13 +282,13 @@ const MusicManagement = () => {
                                     setFilterType(FilterType.ALL);
                                     setSelectedGenre('all');
                                 }}
-                                className="btn-primary mt-4"
+                                className="sbrm-btn sbrm-btn-primary mt-4"
                             >
                                 <i className="fas fa-redo mr-2"></i>清除筛选
                             </button>
                         ) : (
                             // 无数据时显示"上传第一首音乐"按钮
-                            <button onClick={() => setShowModal(true)} className="btn-primary mt-4">
+                            <button onClick={() => setShowModal(true)} className="sbrm-btn sbrm-btn-primary mt-4">
                                 <i className="fas fa-plus mr-2"></i>上传第一首音乐
                             </button>
                         )
@@ -340,23 +337,28 @@ const MusicManagement = () => {
                 {/* ==================== 左侧 Sidebar ==================== */}
                 <aside className="w-64 flex-shrink-0">
                     <LiquidGlass cornerRadius={16}>
-                        <div className="rounded-lg shadow p-4 h-full overflow-auto">
-                            <h3 className="text-lg font-semibold text-white mb-4">筛选</h3>
+                        <div className="sbrm-rounded-lg sbrm-shadow-card p-4 h-full sbrm-scroll-y">
+                            <h3 className="text-lg font-semibold sbrm-text-primary mb-4">筛选</h3>
 
                             {/* 分类筛选 */}
                             <div className="mb-6">
-                                <h4 className="text-sm font-medium text-gray-200 mb-2">分类</h4>
-                                <ul className="space-y-2">
+                                <h4 className="text-sm font-medium sbrm-text-primary-1 mb-3 flex items-center gap-2">
+                                    <i className="fas fa-filter sbrm-text-accent-primary text-xs"></i>
+                                    分类
+                                </h4>
+                                <ul className="space-y-1">
                                     {/* 全部专辑 */}
                                     <li>
                                         <button
                                             onClick={() => handleFilterChange(FilterType.ALBUM_CARDS)}
-                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${filterType === FilterType.ALBUM_CARDS
-                                                ? 'bg-purple-500/20 text-purple-400 font-medium'
-                                                : 'hover:bg-white/5 text-gray-300 hover:text-purple-400'
-                                                }`}
+                                            className={`w-full text-left px-3 py-2.5 sbrm-rounded-md text-sm sbrm-transition ${
+                                                filterType === FilterType.ALBUM_CARDS
+                                                    ? 'sbrm-bg-accent-alpha-20 sbrm-text-primary font-medium sbrm-border-l-2 sbrm-border-accent'
+                                                    : 'hover:sbrm-bg-hover sbrm-text-primary-1 hover:sbrm-text-primary'
+                                            }`}
                                         >
-                                            <i className="fas fa-compact-disc mr-2"></i>全部专辑
+                                            <i className="fas fa-compact-disc mr-2 sbrm-text-accent-primary"></i>
+                                            全部专辑
                                         </button>
                                     </li>
                                     
@@ -364,12 +366,14 @@ const MusicManagement = () => {
                                     <li>
                                         <button
                                             onClick={() => handleFilterChange(FilterType.ALL)}
-                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${filterType === FilterType.ALL
-                                                ? 'bg-purple-500/20 text-purple-400 font-medium'
-                                                : 'hover:bg-white/5 text-gray-300 hover:text-purple-400'
-                                                }`}
+                                            className={`w-full text-left px-3 py-2.5 sbrm-rounded-md text-sm sbrm-transition ${
+                                                filterType === FilterType.ALL
+                                                    ? 'sbrm-bg-accent-alpha-20 sbrm-text-primary font-medium sbrm-border-l-2 sbrm-border-accent'
+                                                    : 'hover:sbrm-bg-hover sbrm-text-primary-1 hover:sbrm-text-primary'
+                                            }`}
                                         >
-                                            <i className="fas fa-music mr-2"></i>全部音乐
+                                            <i className="fas fa-music mr-2 sbrm-text-accent-primary"></i>
+                                            全部音乐
                                         </button>
                                     </li>
                                     
@@ -377,12 +381,14 @@ const MusicManagement = () => {
                                     <li>
                                         <button
                                             onClick={() => handleFilterChange(FilterType.LIKED)}
-                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${filterType === FilterType.LIKED
-                                                ? 'bg-purple-500/20 text-purple-400 font-medium'
-                                                : 'hover:bg-white/5 text-gray-300 hover:text-purple-400'
-                                                }`}
+                                            className={`w-full text-left px-3 py-2.5 sbrm-rounded-md text-sm sbrm-transition ${
+                                                filterType === FilterType.LIKED
+                                                    ? 'sbrm-bg-accent-alpha-20 sbrm-text-primary font-medium sbrm-border-l-2 sbrm-border-accent'
+                                                    : 'hover:sbrm-bg-hover sbrm-text-primary-1 hover:sbrm-text-primary'
+                                            }`}
                                         >
-                                            <i className="fas fa-heart mr-2"></i>我喜欢的
+                                            <i className="fas fa-heart mr-2 sbrm-text-error"></i>
+                                            我喜欢的
                                         </button>
                                     </li>
                                     
@@ -390,29 +396,38 @@ const MusicManagement = () => {
                                     <li>
                                         <button
                                             onClick={() => handleFilterChange(FilterType.RECENT)}
-                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${filterType === FilterType.RECENT
-                                                ? 'bg-purple-500/20 text-purple-400 font-medium'
-                                                : 'hover:bg-white/5 text-gray-300 hover:text-purple-400'
-                                                }`}
+                                            className={`w-full text-left px-3 py-2.5 sbrm-rounded-md text-sm sbrm-transition ${
+                                                filterType === FilterType.RECENT
+                                                    ? 'sbrm-bg-accent-alpha-20 sbrm-text-primary font-medium sbrm-border-l-2 sbrm-border-accent'
+                                                    : 'hover:sbrm-bg-hover sbrm-text-primary-1 hover:sbrm-text-primary'
+                                            }`}
                                         >
-                                            <i className="fas fa-clock mr-2"></i>最近播放
+                                            <i className="fas fa-clock mr-2 sbrm-text-accent-primary"></i>
+                                            最近播放
                                         </button>
                                     </li>
                                 </ul>
                             </div>
 
+                            {/* 分隔线 */}
+                            <div className="sbrm-divider"></div>
+
                             {/* 流派筛选 */}
                             <div className="mb-6">
-                                <h4 className="text-sm font-medium text-gray-200 mb-2">流派</h4>
-                                <ul className="space-y-2">
+                                <h4 className="text-sm font-medium sbrm-text-primary-1 mb-3 flex items-center gap-2">
+                                    <i className="fas fa-tags sbrm-text-accent-primary text-xs"></i>
+                                    流派
+                                </h4>
+                                <ul className="space-y-1 max-h-64 sbrm-scroll-y">
                                     {/* 全部流派 */}
                                     <li>
                                         <button
                                             onClick={() => handleGenreChange('all')}
-                                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${selectedGenre === 'all'
-                                                ? 'bg-purple-500/20 text-purple-400 font-medium'
-                                                : 'hover:bg-white/5 text-gray-300 hover:text-purple-400'
-                                                }`}
+                                            className={`w-full text-left px-3 py-2 sbrm-rounded-md text-sm sbrm-transition ${
+                                                selectedGenre === 'all'
+                                                    ? 'sbrm-bg-accent-alpha-20 sbrm-text-primary font-medium'
+                                                    : 'hover:sbrm-bg-hover sbrm-text-primary-1 hover:sbrm-text-primary'
+                                            }`}
                                         >
                                             全部流派
                                         </button>
@@ -423,10 +438,11 @@ const MusicManagement = () => {
                                         <li key={genre}>
                                             <button
                                                 onClick={() => handleGenreChange(genre)}
-                                                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${selectedGenre === genre
-                                                    ? 'bg-purple-500/20 text-purple-400 font-medium'
-                                                    : 'hover:bg-white/5 text-gray-300 hover:text-purple-400'
-                                                    }`}
+                                                className={`w-full text-left px-3 py-2 sbrm-rounded-md text-sm sbrm-transition ${
+                                                    selectedGenre === genre
+                                                        ? 'sbrm-bg-accent-alpha-20 sbrm-text-primary font-medium'
+                                                        : 'hover:sbrm-bg-hover sbrm-text-primary-1 hover:sbrm-text-primary'
+                                                }`}
                                             >
                                                 {genre}
                                             </button>
@@ -435,23 +451,37 @@ const MusicManagement = () => {
                                 </ul>
                             </div>
 
+                            {/* 分隔线 */}
+                            <div className="sbrm-divider"></div>
+
                             {/* 统计信息 */}
-                            <div className="border-t border-gray-600 pt-4">
-                                <h4 className="text-sm font-medium text-gray-200 mb-2">统计</h4>
-                                <div className="space-y-2 text-sm text-gray-300">
+                            <div>
+                                <h4 className="text-sm font-medium sbrm-text-primary-1 mb-3 flex items-center gap-2">
+                                    <i className="fas fa-chart-bar sbrm-text-accent-primary text-xs"></i>
+                                    统计
+                                </h4>
+                                <div className="space-y-3">
                                     {/* 总曲目数 */}
-                                    <div className="flex justify-between">
-                                        <span>总曲目</span>
-                                        <span className="font-semibold text-purple-400">{stats.count}</span>
+                                    <div className="flex justify-between items-center px-3 py-2 sbrm-bg-secondary sbrm-rounded-md">
+                                        <span className="text-sm sbrm-text-secondary flex items-center gap-2">
+                                            <i className="fas fa-music text-xs sbrm-text-accent-primary"></i>
+                                            总曲目
+                                        </span>
+                                        <span className="text-sm font-semibold sbrm-text-primary">
+                                            {stats.count}
+                                        </span>
                                     </div>
                                     
                                     {/* 总时长 */}
-                                    <div className="flex justify-between">
-                                        <span>总时长</span>
-                                        <span className="font-semibold text-purple-400">
+                                    <div className="flex justify-between items-center px-3 py-2 sbrm-bg-secondary sbrm-rounded-md">
+                                        <span className="text-sm sbrm-text-secondary flex items-center gap-2">
+                                            <i className="fas fa-clock text-xs sbrm-text-accent-primary"></i>
+                                            总时长
+                                        </span>
+                                        <span className="text-sm font-semibold sbrm-text-primary">
                                             {stats.hours > 0
-                                                ? `${stats.hours}小时${stats.duration % 60}分钟`
-                                                : `${stats.duration}分钟`
+                                                ? `${stats.hours}h ${stats.duration % 60}m`
+                                                : `${stats.duration}m`
                                             }
                                         </span>
                                     </div>
@@ -462,8 +492,14 @@ const MusicManagement = () => {
                 </aside>
 
                 {/* ==================== 右侧主内容区 ==================== */}
-                <main className="flex-1 overflow-auto">
-                    {renderContent()}
+                <main className="flex-1 sbrm-scroll-y">
+                    {loading ? (
+                        <div className="flex items-center justify-center h-full">
+                            <div className="loading-spinner"></div>
+                        </div>
+                    ) : (
+                        renderContent()
+                    )}
                 </main>
             </div>
 

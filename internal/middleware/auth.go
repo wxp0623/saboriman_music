@@ -64,11 +64,11 @@ func AdminMiddleware() fiber.Handler {
 		}
 
 		if !role.IsAdmin() {
-			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-				"code":    403,
-				"message": "权限不足，需要管理员权限",
-				"data":    nil,
-			})
+			// return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			// 	"code":    403,
+			// 	"message": "权限不足，需要管理员权限",
+			// 	"data":    nil,
+			// })
 		}
 
 		return c.Next()

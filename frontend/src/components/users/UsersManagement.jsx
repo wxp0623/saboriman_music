@@ -27,7 +27,6 @@ const UsersManagement = () => {
         let totalCount = 0;
 
         const data = payload.data.data;
-        console.log('Fetched user data:', data);
         if (Array.isArray(data)) {
           // Handles case where API returns a direct array: [...]
           items = data;
@@ -109,7 +108,7 @@ const UsersManagement = () => {
             <h2 className="text-2xl font-bold text-text-primary">👥 用户管理</h2>
             <Button
               onClick={onCreate}
-              className="px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-secondary text-white transition-colors"
+              className="px-4 py-2 rounded-lg bg-accent-primary hover:bg-accent-secondary  transition-colors"
             >
               ➕ 新增用户
             </Button>
@@ -150,12 +149,12 @@ const UsersManagement = () => {
                     <td className="px-4 py-3 text-sm font-medium text-text-primary">{u.username}</td>
                     <td className="px-4 py-3 text-sm text-text-primary">{u.email}</td>
                     <td className="px-4 py-3 text-sm">
-                      <span className="text-sm text-gray-200 dark:text-gray-200 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                      <span className="text-sm --text-primary-1 dark:--text-primary-1 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
                         {roleOptions.find(r => r.value === String(u.role))?.label || '未知角色'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      <span className="text-sm text-gray-200 dark:text-gray-200 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                      <span className="text-sm --text-primary-1 dark:--text-primary-1 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
                         {statusOptions.find(r => r.value === String(u.status))?.label || '未知状态'}
                       </span>
                     </td>

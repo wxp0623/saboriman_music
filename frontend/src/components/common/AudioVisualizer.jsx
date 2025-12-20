@@ -23,7 +23,6 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
 
     setIsAnalyzing(true);
     setAnalyzeProgress(0);
-    console.log('Starting pre-analysis of audio...');
 
     try {
       // 创建离线音频上下文
@@ -35,7 +34,6 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
       const arrayBuffer = await response.arrayBuffer();
       const audioBuffer = await offlineContext.decodeAudioData(arrayBuffer);
       
-      console.log('Audio decoded, duration:', audioBuffer.duration, 'seconds');
 
       // 创建离线分析器
       const analyser = offlineContext.createAnalyser();
@@ -57,7 +55,6 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
       const totalFrames = Math.ceil(duration * sampleRate);
       const frameInterval = 1 / sampleRate;
 
-      console.log('Will analyze', totalFrames, 'frames');
 
       // 存储预分析的数据
       const preAnalyzedData = [];
@@ -101,7 +98,6 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
       }
 
       preAnalyzedDataRef.current = preAnalyzedData;
-      console.log('Pre-analysis complete, total frames:', preAnalyzedData.length);
       setIsAnalyzing(false);
       setAnalyzeProgress(100);
 
@@ -145,7 +141,6 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
    * 开始可视化动画（使用预分析的数据）
    * ---------------------------- */
   const startVisualization = useCallback(() => {
-    console.log('Starting visualization animation...');
     if (animationIdRef.current) {
       cancelAnimationFrame(animationIdRef.current);
     }
@@ -206,7 +201,6 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
    * 停止可视化
    * ---------------------------- */
   const stopVisualization = useCallback(() => {
-    console.log('Stopping visualization...');
     if (animationIdRef.current) {
       cancelAnimationFrame(animationIdRef.current);
       animationIdRef.current = null;
@@ -220,17 +214,14 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) {
-      console.error('No audio element provided');
       return;
     }
 
     const handleLoadedMetadata = () => {
-      console.log('Audio metadata loaded, starting pre-analysis...');
       preAnalyzeAudio();
     };
 
     const handlePlay = () => {
-      console.log('Play event triggered');
       if (preAnalyzedDataRef.current && preAnalyzedDataRef.current.length > 0) {
         startVisualization();
         setIsVisualizing(true);
@@ -238,12 +229,10 @@ const AudioVisualizer = ({ audioRef, barCount = 50, barWidth = 12, maxHeight = 8
     };
 
     const handlePause = () => {
-      console.log('Pause event triggered');
       stopVisualization();
     };
 
     const handleEnded = () => {
-      console.log('Ended event triggered');
       stopVisualization();
     };
 

@@ -1,0 +1,37 @@
+# Saboriman Music 的主配置文件
+#
+# 程序会优先读取此文件中的配置。
+# 你也可以通过设置环境变量来覆盖这些值。
+# 例如，设置 SABORIMAN_PORT=9000 会覆盖这里的 Port 设置。
+
+# [服务器设置]
+# 服务器监听的端口
+Port = 8180
+
+# 日志级别 (可选值: "debug", "info", "warn", "error")
+LogLevel = "info"
+
+
+# [路径设置]
+# 音乐库的绝对路径。
+# 在 Docker 中，这应该是容器内挂载数据卷的路径，例如 /music
+MusicFolder = "/music"
+AppBasePath = ""
+
+# [数据库设置]
+[Database]
+# 数据库类型, 可选值: "sqlite", "mysql", "postgres"
+# 修改这个值可以切换不同的数据库
+Type = "sqlite"
+
+# --- SQLite 配置 ---
+# 当 Type = "sqlite" 时，以下配置生效
+Path = "saboriman_music.db"
+
+# --- MySQL/PostgreSQL 配置 ---
+# 当 Type = "mysql" 或 "postgres" 时，以下配置生效
+# Host = "192.168.1.193"
+# Port = 3308
+# User = "root"
+# Password = "765540Wu"
+# Name = "saboriman_music"

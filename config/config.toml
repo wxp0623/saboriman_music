@@ -15,8 +15,8 @@ LogLevel = "info"
 # [路径设置]
 # 音乐库的绝对路径。
 # 在 Docker 中，这应该是容器内挂载数据卷的路径，例如 /music
-MusicFolder = "/music"
-
+MusicFolder = "/app/music"
+AppBasePath = "/app"
 
 # [数据库设置]
 [Database]

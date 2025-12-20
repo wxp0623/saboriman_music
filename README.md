@@ -210,3 +210,13 @@ type CustomEntity struct {
 
 这样你就可以轻松地根据实体定义自动创建和管理数据库表了！
 go run ./internal/test/test_bcrypt.go
+
+===================部署=======================
+# 进入项目目录（根据你的实际路径调整）
+cd /path/to/workspace
+
+# 部署
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 查看日志（可选）
+docker compose -f docker-compose.prod.yml logs -f app

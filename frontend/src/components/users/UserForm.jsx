@@ -101,14 +101,14 @@ const UserForm = ({ open, initial, onClose, onSubmit }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:--text-primary-1"
               >
                 取消
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+                className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700  disabled:opacity-50"
               >
                 {saving ? '保存中...' : '保存'}
               </button>
