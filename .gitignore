@@ -62,3 +62,6 @@ frontend/.DS_Store
 frontend/package-lock.json
 frontend/yarn.lock
 frontend/pnpm-lock.yaml
+build.sh
+test_api.sh
+test_database.sh

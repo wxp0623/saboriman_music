@@ -48,14 +48,14 @@ const Player = () => {
     // 使用 useMemo 缓存音频 URL
     const audioUrl = useMemo(() => {
         if (!currentMusic?.path) return '';
-        const url = getFullUrl(currentMusic.path);
+        const url = getFullUrl(currentMusic?.path);
         return url;
     }, [currentMusic?.path]);
 
     // 使用 useMemo 缓存封面 URL
     const coverUrl = useMemo(() => {
         if (!currentMusic?.coverUrl) return null;
-        return getFullUrl(currentMusic.coverUrl);
+        return getFullUrl(currentMusic?.coverUrl);
     }, [currentMusic?.coverUrl]);
 
     // 格式化时间
@@ -146,7 +146,7 @@ const Player = () => {
 
         try {
             // 调用 API 添加/取消喜欢
-            await api.playlists.favorite({ musicId: currentMusic.id });
+            await api.playlists.favorite({ musicId: currentMusic?.id });
             
             // 切换收藏状态
             setIsFavorited(!isFavorited);
@@ -187,7 +187,7 @@ const Player = () => {
     // 当音乐改变时更新收藏状态
     useEffect(() => {
         if (currentMusic?.id) {
-            setIsFavorited(currentMusic.favorited || false);
+            setIsFavorited(currentMusic?.favorited || false);
         } else {
             setIsFavorited(false);
         }
@@ -254,9 +254,9 @@ const Player = () => {
     }, [showPlaylist]);
 
     // 如果没有当前音乐，不显示播放器
-    if (!currentMusic) {
-        return null;
-    }
+    // if (!currentMusic) {
+    //     return null;
+    // }
 
     const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
@@ -273,7 +273,7 @@ const Player = () => {
                                     {coverUrl ? (
                                         <img
                                             src={coverUrl}
-                                            alt={currentMusic.title}
+                                            alt={currentMusic?.title}
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
                                                 e.target.style.display = 'none';
@@ -289,10 +289,10 @@ const Player = () => {
                                 {/* 音乐信息 */}
                                 <div className="min-w-0 flex-1">
                                     <h3 className="sbrm-text-primary font-semibold truncate">
-                                        {currentMusic.title || '未知标题'}
+                                        {currentMusic?.title || '未选择音乐'}
                                     </h3>
                                     <p className="sbrm-text-primary-1 text-sm truncate">
-                                        {currentMusic.artist || '未知艺术家'}
+                                        {currentMusic?.artist || ''}
                                     </p>
                                 </div>
 

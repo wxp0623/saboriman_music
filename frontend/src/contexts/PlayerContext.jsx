@@ -227,8 +227,32 @@ export const PlayerProvider = ({ children }) => {
 
     // 切换播放/暂停
     const togglePlay = useCallback(() => {
-        setIsPlaying(prev => !prev);
-    }, []);
+        // 没有当前音乐或音频还没准备好，直接返回
+        if (!currentMusic || !currentMusic.id || !audioRef.current) {
+            console.warn('togglePlay: 无可播放的音乐或 audio 未就绪', currentMusic);
+            return;
+        }
+
+        // 如果没有 src，尝试重新加载
+        if (!audioRef.current.src) {
+            audioRef.current.load();
+        }
+
+        setIsPlaying(prev => {
+            const next = !prev;
+            // 立即同步到音频元素，避免状态延迟造成体验问题
+            if (next) {
+                audioRef.current.play().catch(err => {
+                    console.error('播放失败:', err);
+                    // 回退 UI 状态
+                    setIsPlaying(false);
+                });
+            } else {
+                audioRef.current.pause();
+            }
+            return next;
+        });
+    }, [currentMusic]);
 
     // 切换播放模式
     const togglePlayMode = useCallback(() => {

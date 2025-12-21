@@ -8,17 +8,16 @@ const LiquidGlass = ({
   ...props
 }) => {
   const classList = useMemo(() => {
-    let classes = 'sbrm-bg-glass sbrm-backdrop-blur sbrm-border sbrm-border-tertiary ';
-    
+    let classList = ["sbrm-bg-glass", "sbrm-backdrop-blur", "sbrm-border", "sbrm-border-tertiary", "overflow-hidden"];
     if (className) {
-      classes += className + ' ';
+      classList.push(className);
     }
     
     if (radius) {
-      classes += 'sbrm-rounded ';
+      classList.push("sbrm-rounded");
     }
-    
-    return classes.trim();
+
+    return classList.join(' ');
   }, [className, radius]);
 
   const style = useMemo(() => {

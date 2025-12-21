@@ -80,4 +80,7 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 	playlists.Delete("/:id/musics", playlistHandler.RemoveMusicFromPlaylist)
 	playlists.Post("/:id/play", playlistHandler.PlayPlaylist)
 	playlists.Post("/favorite", playlistHandler.AddToFavoritePlaylist)
+
+	// Register subsonic endpoints
+	RegisterSubsonic(app, db)
 }

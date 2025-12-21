@@ -186,7 +186,7 @@ const AlbumManagement = ({onChange}) => {
                 </LiquidGlass>
             ) : (
                 <>
-                    <div className='h-[calc(100vh-265px)] overflow-auto sbrm-scroll-y'>
+                    <div className='h-[calc(100vh-265px)] overflow-auto sbrm-scroll-y pb-4'>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             {albums.map((album) => (
                                 <LiquidGlass key={album.id} radius={12}>

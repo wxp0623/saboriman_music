@@ -114,9 +114,9 @@ const MusicManagement = () => {
             if (filterType === FilterType.LIKED) {
                 // 我喜欢的音乐：设置 favorited 参数，使用列表视图
                 params.favorited = true;
-                params.albumId = null;
-                setViewMode(ViewMode.LIST);
-                setAlbum({});
+
+                setViewMode(ViewMode.ALBUM_INFO);
+                setAlbum({name: '我喜欢的音乐', artistName: '多位艺术家'});
             } else if (filterType === FilterType.ALBUM_CARDS) {
                 // 专辑卡片视图
                 setViewMode(ViewMode.ALBUM_CARDS);
@@ -127,8 +127,8 @@ const MusicManagement = () => {
                 setViewMode(ViewMode.ALBUM_INFO);
             } else {
                 // 全部音乐：清空专辑信息，使用列表视图
-                setAlbum({});
-                setViewMode(ViewMode.LIST);
+                setAlbum({name: '全部音乐', artistName: '多位艺术家'});
+                setViewMode(ViewMode.ALBUM_INFO);
             }
 
             // 请求音乐列表
@@ -320,7 +320,9 @@ const MusicManagement = () => {
 
             case ViewMode.ALBUM_CARDS:
                 // 专辑卡片管理视图
-                return <AlbumList onChange={onAlbumChange}/>;
+                return <LiquidGlass className="px-4">
+                    <AlbumList onChange={onAlbumChange}/>
+                </LiquidGlass>;
 
             default:
                 // 默认列表视图
