@@ -9,7 +9,7 @@ services:
       - GO_ENV=production
       - SABORIMAN_DATABASE_HOST=192.168.1.193
       - SABORIMAN_DATABASE_PORT=3308
-      - SABORIMAN_DATABASE_USER=saboriman
+      - SABORIMAN_DATABASE_USER=root
       - SABORIMAN_DATABASE_PASSWORD=765540Wu
       - SABORIMAN_DATABASE_NAME=saboriman_music
     volumes:

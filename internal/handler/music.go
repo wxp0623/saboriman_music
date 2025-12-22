@@ -113,7 +113,7 @@ func (h *MusicHandler) ListMusics(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
 	pageSize := c.QueryInt("page_size", 10)
 	albumId := c.Query("albumId")
-	isFavorited := c.QueryBool("favorited", false) // 直接获取 bool，默认为 false
+	isFavorited := c.QueryBool("favorited", false)
 	query := c.Query("q")
 
 	// 获取当前用户ID
@@ -125,50 +125,59 @@ func (h *MusicHandler) ListMusics(c *fiber.Ctx) error {
 	var musics []entity.Music
 	var total int64
 
+	// 基础查询
 	dbQuery := h.db.Model(&entity.Music{})
 
+	// 专辑筛选
 	if albumId != "" {
 		dbQuery = dbQuery.Where("album_id = ?", albumId)
 	}
 
+	// 关键字筛选
 	if query != "" {
 		searchQuery := "%" + query + "%"
-		dbQuery = dbQuery.Where("title LIKE ? OR artist LIKE ? OR album_artist LIKE ?", searchQuery, searchQuery, searchQuery)
+		dbQuery = dbQuery.Where("(title LIKE ? OR artist LIKE ? OR album_artist LIKE ?)", searchQuery, searchQuery, searchQuery)
 	}
 
+	// 先统计总数
 	if err := dbQuery.Count(&total).Error; err != nil {
 		return utils.SendError(c, "获取音乐总数失败")
 	}
 
+	// 分页 + 排序（按碟号/轨号/标题，避免随机顺序）
 	offset := (page - 1) * pageSize
-	if err := dbQuery.Offset(offset).Limit(pageSize).Find(&musics).Error; err != nil {
+	if err := dbQuery.
+		Select("*").
+		Order("COALESCE(disc_number, 0) ASC").
+		Order("COALESCE(track_number, 0) ASC").
+		Order("title ASC").
+		Offset(offset).
+		Limit(pageSize).
+		Find(&musics).Error; err != nil {
 		return utils.SendError(c, "获取音乐列表失败")
 	}
 
-	// 查找当前用户的"我的喜欢"播放列表
+	// 查找当前用户的"我的喜爱"播放列表
 	var favoritePlaylist entity.Playlist
 	err := h.db.Where("name = ? AND user_id = ?", "我的喜爱", userID).First(&favoritePlaylist).Error
 
-	// 获取"我的喜欢"中的所有音乐ID
+	// 获取"我的喜欢"中的所有音乐ID（使用桥接表，避免错误 JOIN）
 	favoriteMusicIDs := make(map[string]bool)
 	if err == nil {
-		// 播放列表存在，查询关联的音乐ID
 		var musicIDs []string
-		h.db.Model(&favoritePlaylist).
-			Select("music.id").
-			Joins("JOIN playlist_musics ON playlist_musics.playlist_id = ?", favoritePlaylist.ID).
-			Joins("JOIN music ON music.id = playlist_musics.music_id").
-			Pluck("music.id", &musicIDs)
-
-		// 转换为 map 方便快速查找
-		for _, id := range musicIDs {
-			favoriteMusicIDs[id] = true
+		if err := h.db.
+			Table("playlist_musics").
+			Where("playlist_id = ?", favoritePlaylist.ID).
+			Pluck("music_id", &musicIDs).Error; err == nil {
+			for _, id := range musicIDs {
+				favoriteMusicIDs[id] = true
+			}
 		}
 	}
 
-	var musicResponses []dto.ListMusicResponse
+	// 过滤喜爱（仅在需要时过滤）
+	musicResponses := make([]dto.ListMusicResponse, 0, len(musics))
 	for _, music := range musics {
-		// 筛选喜爱的音乐
 		if isFavorited && !favoriteMusicIDs[music.ID] {
 			continue
 		}
@@ -179,7 +188,6 @@ func (h *MusicHandler) ListMusics(c *fiber.Ctx) error {
 	}
 
 	totalPages := (total + int64(pageSize) - 1) / int64(pageSize)
-
 	result := map[string]interface{}{
 		"data":        musicResponses,
 		"total":       total,
