@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
+const API_BASE_URL = import.meta.env.VITE_DEV_BASE_URL + "/api" ?? '/api';
 
 // Loading 状态管理
 let loadingCount = 0;

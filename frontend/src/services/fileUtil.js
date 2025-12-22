@@ -4,10 +4,10 @@ export const getFullUrl = (path) => {
         return path;
     }
 
-    // 开发环境：使用 VITE_API_BASE_URL
-    if (import.meta.env.DEV && import.meta.env.VITE_DEV_BASE_API) {
-        console.log("🔧 开发环境 API Base URL:", import.meta.env.VITE_DEV_BASE_API);
-        return `${import.meta.env.VITE_DEV_BASE_API}${path}`;
+    // 开发环境：使用 VITE_DEV_BASE_URL
+    if (import.meta.env.DEV && import.meta.env.VITE_DEV_BASE_URL) {
+        console.log("🔧 开发环境 API Base URL:", import.meta.env.VITE_DEV_BASE_URL);
+        return `${import.meta.env.VITE_DEV_BASE_URL}${path}`;
     }
 
     // 生产环境：使用相对路径（前端和后端同源）

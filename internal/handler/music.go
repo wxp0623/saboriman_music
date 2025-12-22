@@ -235,6 +235,17 @@ type ScanResult struct {
 	Errors       []string `json:"errors"`
 }
 
+// 在 music.go 顶部添加规范化函数
+func normalizeString(s string) string {
+	// 1. 去前后空格
+	s = strings.TrimSpace(s)
+	// 2. 压缩多个空格为单空格
+	s = strings.Join(strings.Fields(s), " ")
+	// 3. 统一大小写（可选，保留原大小写更友好）
+	// 如果要严格匹配，可加: s = strings.ToLower(s)
+	return s
+}
+
 // ScanLibrary 扫描音乐库并更新数据库
 func (h *MusicHandler) ScanLibrary(c *fiber.Ctx) error {
 	musicFolder := config.AppConfig.MusicFolder
@@ -464,6 +475,9 @@ func ScanLibraryInBackground(db *gorm.DB, musicFolder string) {
 			var albumID string
 
 			if albumName != "" {
+				// 规范化专辑名
+				albumName = normalizeString(albumName)
+
 				artistName := meta.AlbumArtist()
 				if artistName == "" {
 					artistName = meta.Artist()
@@ -471,8 +485,10 @@ func ScanLibraryInBackground(db *gorm.DB, musicFolder string) {
 				if artistName == "" {
 					artistName = "未知艺术家"
 				}
+				// 规范化艺术家名
+				artistName = normalizeString(artistName)
 
-				// 使用 "专辑名::艺术家名" 作为唯一键
+				// 使用规范化后的 "专辑名::艺术家名" 作为唯一键
 				albumKey := fmt.Sprintf("%s::%s", albumName, artistName)
 
 				// 首先检查内存缓存
@@ -557,9 +573,9 @@ func ScanLibraryInBackground(db *gorm.DB, musicFolder string) {
 			}
 
 			if meta != nil {
-				music.Title = meta.Title()
-				music.Artist = meta.Artist()
-				music.AlbumArtist = meta.AlbumArtist()
+				music.Title = normalizeString(meta.Title())
+				music.Artist = normalizeString(meta.Artist())
+				music.AlbumArtist = normalizeString(meta.AlbumArtist())
 				music.Genre = meta.Genre()
 				music.Composer = meta.Composer()
 			}
