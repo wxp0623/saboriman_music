@@ -22,7 +22,7 @@ AppBasePath = ""
 [Database]
 # 数据库类型, 可选值: "sqlite", "mysql", "postgres"
 # 修改这个值可以切换不同的数据库
-Type = "mysql"
+Type = "sqlite"
 
 # --- SQLite 配置 ---
 # 当 Type = "sqlite" 时，以下配置生效
@@ -34,4 +34,4 @@ Host = "192.168.1.193"
 Port = 3308
 User = "root"
 Password = "765540Wu"
-Name = "saboriman_music"
+Name = "saboriman_music_dev"

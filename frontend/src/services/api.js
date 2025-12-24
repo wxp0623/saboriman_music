@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_DEV_BASE_URL + "/api" ?? '/api';
+const API_BASE_URL = import.meta.env.VITE_DEV_BASE_URL ?? "";
+const API_URL = API_BASE_URL + "/api";
 
 // Loading 状态管理
 let loadingCount = 0;
@@ -22,7 +23,7 @@ const showLoading = () => {
                     <div class="loading-spinner"></div>
                     <span class="mt-4 text-gray-700 font-medium">加载中...</span>
                 </div>
-            `;
+            `; 
             document.body.appendChild(loadingElement);
             
             // 触发渐入动画
@@ -69,7 +70,7 @@ const hideLoading = () => {
 
 // 创建 axios 实例
 const apiClient = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_URL,
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -84,6 +85,7 @@ apiClient.interceptors.request.use(
         if (config.showLoading !== false) {
             showLoading();
         }
+        console.log("API_URL:", API_URL);
         
         const token = localStorage.getItem('token');
         if (token) {

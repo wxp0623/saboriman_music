@@ -61,17 +61,20 @@ func main() {
 	app.Use(cors.New())
 	app.Use(logger.New())
 
+	appBasePath := config.AppConfig.AppBasePath
+
 	// 静态文件服务
 	app.Static("/uploads", "./uploads")
 	app.Static("/music/.covers", "/music/.covers")
 	app.Static("/", "./frontend/dist")
 	// 静态文件服务 - 提供音乐文件访问
 
-	appBasePath := config.AppConfig.AppBasePath
-	app.Static("/music", appBasePath+"/music", fiber.Static{
+	app.Static(appBasePath+"/music", appBasePath+"/music", fiber.Static{
 		Browse:    false,
 		ByteRange: true, // 支持断点续传
 	})
+
+	log.Printf("静态文件服务已启动，监听于 %s", appBasePath+"/music")
 
 	// 5. 将 *gorm.DB 实例传递给路由设置函数
 	router.SetupRoutes(app, gormDB)

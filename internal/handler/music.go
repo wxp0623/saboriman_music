@@ -841,7 +841,7 @@ func (h *MusicHandler) GetLyrics(c *fiber.Ctx) error {
 		})
 	}
 	// 获取音乐文件夹路径
-	appBasePath := config.AppConfig.AppBasePath
+	// appBasePath := config.AppConfig.AppBasePath
 
 	// 获取音乐文件所在目录
 	musicPath := music.FileUrl
@@ -851,11 +851,13 @@ func (h *MusicHandler) GetLyrics(c *fiber.Ctx) error {
 	// 构建歌词文件路径：音乐文件夹/lyrics/歌曲名.lrc
 	lyricsDir := filepath.Join(musicDir, "lyrics")
 	lyricsFileName := strings.TrimSuffix(musicFileName, filepath.Ext(musicFileName)) + ".lrc"
-	lyricsPath := filepath.Join(appBasePath, lyricsDir, lyricsFileName)
+	// lyricsPath := filepath.Join(appBasePath, lyricsDir, lyricsFileName)
+	lyricsPath := filepath.Join(lyricsDir, lyricsFileName)
 
 	// 构建翻译歌词文件路径：音乐文件夹/lyrics/歌曲名.zh.lrc
 	translationFileName := strings.TrimSuffix(musicFileName, filepath.Ext(musicFileName)) + ".zh.lrc"
-	translationPath := filepath.Join(appBasePath, lyricsDir, translationFileName)
+	// translationPath := filepath.Join(appBasePath, lyricsDir, translationFileName)
+	translationPath := filepath.Join(lyricsDir, translationFileName)
 
 	// 1. 优先尝试从本地 lyrics 文件夹读取歌词（无论 engine 是什么）
 	lyricsContent, lyricsErr := os.ReadFile(lyricsPath)

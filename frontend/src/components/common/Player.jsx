@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { useLocation } from 'react-router-dom';
 import LiquidGlass from '../ui/LiquidGlass.jsx';
 import { usePlayer } from '../../contexts/PlayerContext.jsx';
 import FullPlayer from './FullPlayer.jsx';
@@ -7,6 +8,8 @@ import api from '../../services/api.js';
 import { getFullUrl } from '../../services/fileUtil.js';
 
 const Player = () => {
+    const location = useLocation();
+    
     const {
         currentMusic,
         isPlaying,
@@ -253,10 +256,11 @@ const Player = () => {
         }
     }, [showPlaylist]);
 
-    // 如果没有当前音乐，不显示播放器
-    // if (!currentMusic) {
-    //     return null;
-    // }
+    // ✅ 修复：如果没有当前音乐或在登录页面，不显示播放器
+    const isLoginPage = location.pathname === '/login' || location.pathname === '/';
+    if (isLoginPage) {
+        return null;
+    }
 
     const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
